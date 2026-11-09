@@ -1123,6 +1123,7 @@ Panel {
                 delegate: Rectangle {
                   id: characterCard
                   required property var modelData
+                  required property int index
                   Layout.fillWidth: true
                   Layout.preferredWidth: 80
                   implicitHeight: 70
@@ -1134,10 +1135,12 @@ Panel {
                     anchors.centerIn: parent
                     spacing: 4
                     Pet {
+                      objectName: "preview-" + characterCard.modelData.id
                       anchors.horizontalCenter: parent.horizontalCenter
                       width: 32; height: 32
                       character: characterCard.modelData.id
-                      definition: characterCard.modelData
+                      // modelData vira QVariantMap e perde os arrays JS; usa o objeto original
+                      definition: root.characters[characterCard.index]
                       petState: root.petState
                       mood: root.currentMood
                       inkColor: root.surface
