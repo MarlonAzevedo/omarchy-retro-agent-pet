@@ -3,7 +3,7 @@
 // Textos do painel; chave sem tradução cai no português
 var TEXTS = {
   pt: {
-    character: "Personagem", computer: "Computador", cat: "Gato", robot: "Robô", dog: "Cachorro", axolotl: "Axolote",
+    character: "Personagem", computer: "Computador", cat: "Gato", robot: "ET", dog: "Cachorro", axolotl: "Axolote",
     noLimitData: "Sem dados de limite", focus: "Foco", focusRound: "Foco {0}/{1}", breakRound: "Pausa {0}/{1}", paused: " · pausado",
     resume: "Continuar", pause: "Pausar", stop: "Parar", todaySummary: "Hoje · {0} respostas · {1} · {2}",
     moodAnimado: "animado", moodNormal: "normal", moodCansado: "cansado", moodEmburrado: "emburrado",
@@ -25,7 +25,7 @@ var TEXTS = {
     hooksError: "Falhou; rode bin/agent-pet setup na pasta do plugin", hooksChecking: "Conferindo…", inTime: "em {0}", today: "Hoje"
   },
   en: {
-    character: "Character", computer: "Computer", cat: "Cat", robot: "Robot", dog: "Dog", axolotl: "Axolotl",
+    character: "Character", computer: "Computer", cat: "Cat", robot: "ET", dog: "Dog", axolotl: "Axolotl",
     noLimitData: "No limit data", focus: "Focus", focusRound: "Focus {0}/{1}", breakRound: "Break {0}/{1}", paused: " · paused",
     resume: "Resume", pause: "Pause", stop: "Stop", todaySummary: "Today · {0} replies · {1} · {2}",
     moodAnimado: "excited", moodNormal: "fine", moodCansado: "tired", moodEmburrado: "grumpy",

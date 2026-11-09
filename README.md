@@ -12,7 +12,7 @@ agent asks for permission.
 
 > The panel supports Brazilian Portuguese and English.
 
-Choose your companion: Computer, Cat, Robot, Dog or Axolotl.
+Choose your companion: Computer, Cat, ET, Dog or Axolotl.
 
 ![Computer, Cat, Robot, Dog and Axolotl in the current panel](characters.png)
 
@@ -50,7 +50,7 @@ the home pet is larger and keeps its square proportions:
   no notifications and no blinking icon. **Idioma** switches between Portuguese
   and English (automatic follows your system `LANG`). **Sessões** shows whether the session
   hooks are installed, with an **Ativar** button that installs them. **Personagem**
-  offers live previews of Computer, Cat, Robot, Dog, Axolotl and valid characters you add;
+  offers live previews of Computer, Cat, ET, Dog, Axolotl and valid characters you add;
   your choice is saved in `~/.config/agent-pet/config.json` as `character`
   and applies to the bar and panel. Missing or unknown values use Computer.
 - **ⓘ Sobre** — version, license and credits: author, e-mail and project links.

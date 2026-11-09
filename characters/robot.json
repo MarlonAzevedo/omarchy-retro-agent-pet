@@ -1,8 +1,8 @@
 {
   "id": "robot",
   "name": {
-    "pt": "Robô",
-    "en": "Robot"
+    "pt": "ET",
+    "en": "ET"
   },
   "frames": 4,
   "base": [

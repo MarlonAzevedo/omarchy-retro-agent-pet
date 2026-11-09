@@ -16,7 +16,13 @@ All notable changes to Retro Agent Pet are documented here. The format is based 
 - Axolotl character, with gills that flutter while an agent works, waits for you
   or nears a usage limit. Available in the panel picker and `agent-pet pet axolotl`.
 
+### Changed
+
+- The Robot character is now called ET; its id stays `robot`, so saved choices keep working.
+
 ### Fixed
+
+- Character picker previews were blank: each card now draws its own character.
 
 - The Agentes screen lists only agents with usage data. Omarchy 4.5 sends a record
   for every provider it knows (Copilot, Cursor, DeepSeek, Fireworks…), so installed
