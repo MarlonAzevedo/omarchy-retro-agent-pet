@@ -106,7 +106,7 @@ Window {
             test.expect(Math.abs(x - discreet.mapToItem(panel, 0, 0).x) < 1, "Personagens desalinhados com Modo discreto")
             test.expect(!!test.findText(panel, "Claude Code") && !!test.findText(panel, "Codex"), "Agentes com uso sumiram")
             test.expect(!test.findText(panel, "DeepSeek") && !test.findText(panel, "Fireworks · Prepaid"), "Agente sem uso listado em Agentes")
-            var labels = portuguese ? ["Computador", "Gato", "Robô", "Cachorro"] : ["Computer", "Cat", "Robot", "Dog"]
+            var labels = portuguese ? ["Computador", "Gato", "Robô", "Cachorro", "Axolote"] : ["Computer", "Cat", "Robot", "Dog", "Axolotl"]
             labels.forEach(function(text) {
               var label = test.findText(panel, text)
               test.expect(!!label && label.implicitWidth <= label.parent.parent.width - 4, "Nome cortado: " + text)

@@ -3,7 +3,7 @@
 // Textos do painel; chave sem tradução cai no português
 var TEXTS = {
   pt: {
-    character: "Personagem", computer: "Computador", cat: "Gato", robot: "Robô", dog: "Cachorro",
+    character: "Personagem", computer: "Computador", cat: "Gato", robot: "Robô", dog: "Cachorro", axolotl: "Axolote",
     noLimitData: "Sem dados de limite", focus: "Foco", focusRound: "Foco {0}/{1}", breakRound: "Pausa {0}/{1}", paused: " · pausado",
     resume: "Continuar", pause: "Pausar", stop: "Parar", todaySummary: "Hoje · {0} respostas · {1}",
     sessions: "Sessões", noSessions: "Nenhuma sessão ativa", sessionsSummary: "● {0} rodando · {1} no total",
@@ -24,7 +24,7 @@ var TEXTS = {
     hooksError: "Falhou; rode bin/agent-pet setup na pasta do plugin", hooksChecking: "Conferindo…", inTime: "em {0}", today: "Hoje"
   },
   en: {
-    character: "Character", computer: "Computer", cat: "Cat", robot: "Robot", dog: "Dog",
+    character: "Character", computer: "Computer", cat: "Cat", robot: "Robot", dog: "Dog", axolotl: "Axolotl",
     noLimitData: "No limit data", focus: "Focus", focusRound: "Focus {0}/{1}", breakRound: "Break {0}/{1}", paused: " · paused",
     resume: "Resume", pause: "Pause", stop: "Stop", todaySummary: "Today · {0} replies · {1}",
     sessions: "Sessions", noSessions: "No active sessions", sessionsSummary: "● {0} running · {1} total",
@@ -333,7 +333,7 @@ function claimOnce(key) {
 
 // Sprite 16x16 do computador antigo: O/E/C tinta, B gabinete, F tela, A destaque, X alerta, Z sono
 function characterId(value) {
-  return ["computer", "cat", "robot", "dog"].indexOf(value) >= 0 ? value : "computer"
+  return ["computer", "cat", "robot", "dog", "axolotl"].indexOf(value) >= 0 ? value : "computer"
 }
 
 function petRows(state, frame, character, detailed) {
@@ -374,6 +374,12 @@ function characterRows(state, frame, character) {
     "..OBBBBAABBBBO..", ".AOBBBBBBBBBBOA.", "...OOOOOOOOOO...", "....OBBBBBO.....",
     "....OBBBBBO..OO.", "....OBBBBBO..BO.", "...OOBBBBBOOOBO.", "...OOOOOOOOOOO.."
   ]
+  else if (character === "axolotl") rows = [
+    "................", ".A............A.", "..A.OOOOOOOO.A..", "AA.OBBBBBBBBO.AA",
+    "..AOBBBBBBBBOA..", "AAOBBBBBBBBBBOAA", "..OBBBBBBBBBBO..", ".AOBBBBBBBBBBOA.",
+    "...OBBEEEEBBO...", "....OOBBBBOO....", "....OBBBBBBO....", "..OOBBBBBBBBOO..",
+    "..OBOBBBBBBOBO..", "..OOOBBBBBBOOO..", "....OBBBBBBO....", "....OOOOOOOO...."
+  ]
   else if (character === "dog") rows = [
     "................", "................", "...OOOOOOOOOO...", ".OOOBBBBBBBBOOO.",
     ".OBOBBBBBBBBOBO.", ".OBOBBBBBBBBOBO.", ".OBOBBBBBBBBOBO.", ".OOOBBBBBBBBOOO.",
@@ -399,6 +405,10 @@ function characterRows(state, frame, character) {
   }
   if (state === "attention" && !frame) rows[0] = ".......XX......."
   if (state === "sleep") rows[0] = "......Z..Z......"
+  // Brânquias balançam junto com a animação
+  if (character === "axolotl" && frame % 2) {
+    rows[1] = "A..............A"; rows[3] = ".AAOBBBBBBBBOAA."; rows[5] = ".AOBBBBBBBBBBOA."
+  }
   if (character === "robot") {
     var phase = frame % 4
     var leftUp = state === "idle" ? phase === 1 || phase === 2 : state !== "sleep" && phase % 2 === 0
@@ -486,6 +496,13 @@ function detailedPetRows(state, frame, character) {
     line(13, 19, "HEHHEH")
     if (state === "attention") line(14, 17, "XXXX")
     if (state === "working") line(14, 19, frame ? "AAAA" : "HEEH")
+    if (state !== "sleep" && state !== "focus" && state !== "limit") {
+      dot(10, 12, "H"); dot(20, 12, "H")
+    }
+  } else if (character === "axolotl") {
+    line(6, 15, "AA"); line(24, 15, "AA")
+    line(12, 22, "HHHHHHHH")
+    line(12, 27, "SSSSSSSS")
     if (state !== "sleep" && state !== "focus" && state !== "limit") {
       dot(10, 12, "H"); dot(20, 12, "H")
     }

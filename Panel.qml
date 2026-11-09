@@ -953,7 +953,7 @@ Panel {
               columnSpacing: 4
               rowSpacing: 4
               Repeater {
-                model: ["computer", "cat", "robot", "dog"]
+                model: ["computer", "cat", "robot", "dog", "axolotl"]
                 delegate: Rectangle {
                   id: characterCard
                   required property string modelData

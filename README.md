@@ -12,9 +12,9 @@ agent asks for permission.
 
 > The panel supports Brazilian Portuguese and English.
 
-Choose your companion: Computer, Cat, Robot or Dog.
+Choose your companion: Computer, Cat, Robot, Dog or Axolotl.
 
-![Computer, Cat, Robot and Dog in the current panel](characters.png)
+![Computer, Cat, Robot, Dog and Axolotl in the current panel](characters.png)
 
 ## Screens
 
@@ -46,8 +46,9 @@ the home pet is larger and keeps its square proportions:
   no notifications and no blinking icon. **Idioma** switches between Portuguese
   and English (automatic follows your system `LANG`). **Sessões** shows whether the session
   hooks are installed, with an **Ativar** button that installs them. **Personagem**
-  offers live previews of Computer, Cat, Robot and Dog; your choice is saved in
-  `~/.config/agent-pet/config.json` (`character`: `computer`, `cat`, `robot`, `dog`)
+  offers live previews of Computer, Cat, Robot, Dog and Axolotl; your choice is saved in
+  `~/.config/agent-pet/config.json` (`character`: `computer`, `cat`, `robot`, `dog`,
+  `axolotl`)
   and applies to the bar and panel. Missing or unknown values use Computer.
 - **ⓘ Sobre** — version, license and credits: author, e-mail and project links.
 
@@ -130,7 +131,7 @@ tool name and folder.
 | `discreet` | `false` | Discreet mode: no notifications, no blinking icon; managed by the **Agentes** screen. |
 | `language` | `"auto"` | Panel and notification language: `"pt"`, `"en"` or `"auto"` (from `LANG`); managed by the **Agentes** screen. |
 | `focus_rounds` | `4` | Focus rounds per timer started from the panel. |
-| `character` | `"computer"` | `"computer"`, `"cat"`, `"robot"` or `"dog"`; shared by the panel and CLI. |
+| `character` | `"computer"` | `"computer"`, `"cat"`, `"robot"`, `"dog"` or `"axolotl"`; shared by the panel and CLI. |
 
 ## Command line
 
@@ -153,7 +154,7 @@ agent-pet focus pause
 agent-pet focus resume
 agent-pet focus stop
 agent-pet pet                # Show the current character
-agent-pet pet dog            # computer, cat, robot or dog
+agent-pet pet axolotl        # computer, cat, robot, dog or axolotl
 agent-pet --help
 ```
 

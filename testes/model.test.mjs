@@ -46,7 +46,7 @@ expect("working animates", Model.petRows("working", 0).join() !== Model.petRows(
 expect("attention animates", Model.petRows("attention", 0).join() !== Model.petRows("attention", 1).join(), true)
 expect("states are distinct", new Set(["idle", "working", "attention", "done", "sleep", "limit"].map(state => Model.petRows(state, 0).join())).size, 6)
 
-for (const character of ["computer", "cat", "robot", "dog"]) {
+for (const character of ["computer", "cat", "robot", "dog", "axolotl"]) {
   expect(`${character} valid choice`, Model.characterId(character), character)
   for (const state of ["idle", "working", "attention", "done", "focus", "sleep", "limit"]) {
     for (const frame of (character === "robot" ? [0, 1, 2, 3] : [0, 1])) {
@@ -67,9 +67,13 @@ for (const invalid of [undefined, null, "", "unknown", {}, 1]) {
   expect("invalid character falls back", Model.characterId(invalid), "computer")
   expect("invalid character keeps computer sprite", Model.petRows("idle", 0, invalid), Model.petRows("idle", 0))
 }
-expect("four distinct characters", new Set(["computer", "cat", "robot", "dog"].map(character => Model.petRows("idle", 0, character).join())).size, 4)
+expect("five distinct characters", new Set(["computer", "cat", "robot", "dog", "axolotl"].map(character => Model.petRows("idle", 0, character).join())).size, 5)
 expect("character Portuguese", Model.t("pt", "dog"), "Cachorro")
 expect("character English", Model.t("en", "dog"), "Dog")
+expect("axolotl Portuguese", Model.t("pt", "axolotl"), "Axolote")
+expect("axolotl English", Model.t("en", "axolotl"), "Axolotl")
+expect("axolotl is symmetric", Model.petRows("idle", 0, "axolotl").every(row => row === [...row].reverse().join("")), true)
+expect("axolotl gills flutter while working", Model.petRows("working", 0, "axolotl").slice(1, 8).join() !== Model.petRows("working", 1, "axolotl").slice(1, 8).join(), true)
 for (const detailed of [false, true]) {
   expect(`robot idle has four frames (${detailed})`, new Set([0, 1, 2, 3].map(frame => Model.petRows("idle", frame, "robot", detailed).join())).size, 4)
   const scale = detailed ? 2 : 1

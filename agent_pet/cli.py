@@ -10,7 +10,7 @@ from pathlib import Path
 from .installer import check, setup, write_settings_atomically
 
 
-CHARACTERS = ("computer", "cat", "robot", "dog")
+CHARACTERS = ("computer", "cat", "robot", "dog", "axolotl")
 
 
 def config_path():

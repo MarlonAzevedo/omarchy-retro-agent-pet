@@ -6,6 +6,11 @@ All notable changes to Retro Agent Pet are documented here. The format is based 
 
 ## [Unreleased]
 
+### Added
+
+- Axolotl character, with gills that flutter while an agent works, waits for you
+  or nears a usage limit. Available in the panel picker and `agent-pet pet axolotl`.
+
 ### Fixed
 
 - The Agentes screen lists only agents with usage data. Omarchy 4.5 sends a record

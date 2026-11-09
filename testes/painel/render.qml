@@ -7,7 +7,7 @@ Window {
   width: 400; height: 700; visible: true; color: "#000"
   Loader { id: loader; source: "../../Panel.qml" }
   // "tela@agente" escolhe o agente dos gráficos; "tela#foco" mostra um foco em andamento
-  property var screens: ["home", "sessions", "limits", "attention", "agents", "home@codex", "limits@codex", "usage", "usage@codex", "about", "home#foco", "home!en", "agents!en", "attention!en", "home~cat", "home~robot", "home~dog", "agents~dog", "agents!en~robot", "sessions@many"]
+  property var screens: ["home", "sessions", "limits", "attention", "agents", "home@codex", "limits@codex", "usage", "usage@codex", "about", "home#foco", "home!en", "agents!en", "attention!en", "home~cat", "home~robot", "home~dog", "home~axolotl", "agents~dog", "agents~axolotl", "agents!en~robot", "sessions@many"]
   readonly property string outDir: Qt.application.arguments[Qt.application.arguments.length - 1]
   property int step: 0
   // Últimos 7 dias terminando hoje

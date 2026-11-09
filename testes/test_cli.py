@@ -73,7 +73,7 @@ class CliTests(unittest.TestCase):
 
     def test_character_selection_preserves_preferences(self):
         self.write(self.config, {"discreet": True, "hidden_agents": ["codex"], "language": "en"})
-        for character in ["computer", "cat", "robot", "dog"]:
+        for character in ["computer", "cat", "robot", "dog", "axolotl"]:
             result = self.cli("pet", character)
             self.assertEqual(result.returncode, 0, result.stderr)
             config = json.loads(self.config.read_text())
@@ -84,7 +84,7 @@ class CliTests(unittest.TestCase):
         before = self.config.read_bytes()
         self.assertNotEqual(self.cli("pet", "wolf").returncode, 0)
         self.assertEqual(self.config.read_bytes(), before)
-        self.assertIn("dog", self.cli("pet").stdout)
+        self.assertIn("axolotl", self.cli("pet").stdout)
 
     def test_expired_limit_is_zero_like_panel(self):
         usage = self.home / "state" / "omarchy" / "agents" / "usage"
