@@ -6,6 +6,8 @@ All notable changes to Retro Agent Pet are documented here. The format is based 
 
 ## [Unreleased]
 
+## [0.8.0] - 2026-11-09
+
 ### Added
 
 - Built-in characters now live in JSON files; valid characters and translated
@@ -143,7 +145,8 @@ All notable changes to Retro Agent Pet are documented here. The format is based 
   retro computer on the bar, and the Início, Sessões, Limites, Uso, Pedido and
   Agentes screens, with usage and limits from Omarchy's own collectors.
 
-[Unreleased]: https://github.com/MarlonAzevedo/omarchy-retro-agent-pet/compare/v0.7.0...HEAD
+[Unreleased]: https://github.com/MarlonAzevedo/omarchy-retro-agent-pet/compare/v0.8.0...HEAD
+[0.8.0]: https://github.com/MarlonAzevedo/omarchy-retro-agent-pet/compare/v0.7.0...v0.8.0
 [0.7.0]: https://github.com/MarlonAzevedo/omarchy-retro-agent-pet/compare/v0.6.0...v0.7.0
 [0.6.0]: https://github.com/MarlonAzevedo/omarchy-retro-agent-pet/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/MarlonAzevedo/omarchy-retro-agent-pet/compare/v0.4.0...v0.5.0
