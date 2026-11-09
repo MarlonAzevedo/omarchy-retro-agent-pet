@@ -52,6 +52,12 @@ Window {
         panel.screen = screen.split("-")[0]
         panel.config = { language: portuguese ? "pt" : "en", character: "dog" }
         panel.pomodoro = screen === "home-focus" ? { work_min: 25, break_min: 5, rounds: 4, started_at: Date.now(), paused_at: null } : {}
+        // Omarchy 4.5 manda um registro por provedor conhecido, mesmo sem uso
+        panel.usageRecords = screen === "agents" ? [
+          { id: "claude", name: "Claude Code", todaySessions: 2, limits: [] },
+          { id: "codex", name: "Codex", totalPrompts: 9, limits: [] },
+          { id: "deepseek", name: "DeepSeek", limits: [] },
+          { id: "fireworks", name: "Fireworks", tierLabel: "Prepaid", usageStatusText: "Fireworks unavailable", limits: [] } ] : []
         panel.sessions = screen === "sessions-long" ? Array.from({ length: 30 }, function(_, i) { return { session_id: "session-" + i, cwd: "/project/" + i, status: "idle" } }) : []
       } else {
         var card = test.findItem(panel, "card")
@@ -98,6 +104,8 @@ Window {
             var x = title.mapToItem(panel, 0, 0).x
             test.expect(Math.abs(x - language.mapToItem(panel, 0, 0).x) < 1, "Personagens desalinhados com Idioma")
             test.expect(Math.abs(x - discreet.mapToItem(panel, 0, 0).x) < 1, "Personagens desalinhados com Modo discreto")
+            test.expect(!!test.findText(panel, "Claude Code") && !!test.findText(panel, "Codex"), "Agentes com uso sumiram")
+            test.expect(!test.findText(panel, "DeepSeek") && !test.findText(panel, "Fireworks · Prepaid"), "Agente sem uso listado em Agentes")
             var labels = portuguese ? ["Computador", "Gato", "Robô", "Cachorro"] : ["Computer", "Cat", "Robot", "Dog"]
             labels.forEach(function(text) {
               var label = test.findText(panel, text)

@@ -6,6 +6,14 @@ All notable changes to Retro Agent Pet are documented here. The format is based 
 
 ## [Unreleased]
 
+### Fixed
+
+- The Agentes screen lists only agents with usage data. Omarchy 4.5 sends a record
+  for every provider it knows (Copilot, Cursor, DeepSeek, Fireworks…), so installed
+  and missing agents were listed together.
+- The character picker uses a three-column grid, keeping every name readable when
+  the panel scrolls.
+
 ## [0.7.0] - 2026-10-28
 
 ### Added

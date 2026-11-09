@@ -245,12 +245,17 @@ function visibleRecords(records, hidden) {
   return (records || []).filter(function(record) { return (hidden || []).indexOf(record.id) < 0 })
 }
 
+// Agente com algum dado, como o providerHasData do widget Agents do Omarchy
+function hasUsage(record) {
+  return record.todayPrompts > 0 || record.todaySessions > 0 || record.totalPrompts > 0
+    || record.totalSessions > 0 || record.activeDays > 0 || (record.limits && record.limits.length > 0)
+    || (record.accounts && record.accounts.length > 0) || !!record.balance
+    || (record.ready === true && !!record.tierLabel)
+}
+
 // Tela Uso: agentes visíveis que já registraram algum uso
 function usageRecords(records, hidden) {
-  return visibleRecords(records, hidden).filter(function(record) {
-    return record.todayPrompts > 0 || record.todaySessions > 0 || record.totalPrompts > 0
-      || record.totalSessions > 0 || record.activeDays > 0 || (record.limits && record.limits.length > 0)
-  })
+  return visibleRecords(records, hidden).filter(hasUsage)
 }
 
 // Tokens dos últimos dias; share é a fração do dia mais movimentado

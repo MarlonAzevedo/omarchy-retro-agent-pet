@@ -61,6 +61,8 @@ Panel {
   readonly property var currentRecord: Model.pickRecord(limitRecords, selectedAgent)
   readonly property var agentLimits: currentRecord ? currentRecord.limits : []
   readonly property var usageList: Model.usageRecords(usageRecords, hiddenAgents)
+  // Tela Agentes: o Omarchy manda todo provedor que conhece; só os com uso, ocultos inclusive
+  readonly property var agentList: Model.usageRecords(usageRecords, [])
   readonly property var usageRecord: Model.pickRecord(usageList, selectedAgent)
   readonly property var allLimits: {
     var result = []
@@ -881,11 +883,11 @@ Panel {
           spacing: 8
           ScreenHeader { title: root.tr("agents") }
           Repeater {
-            model: root.usageRecords.length
+            model: root.agentList.length
             delegate: Rectangle {
               id: agentCard
               required property int index
-              readonly property var modelData: root.usageRecords[index]
+              readonly property var modelData: root.agentList[index]
               readonly property bool shown: root.hiddenAgents.indexOf(modelData.id) < 0
               readonly property var limits: Array.isArray(modelData.limits) ? modelData.limits : []
               Layout.fillWidth: true
@@ -924,7 +926,7 @@ Panel {
               }
             }
           }
-          Text { text: root.tr("noAgents"); visible: root.usageRecords.length === 0; color: root.dim; Layout.alignment: Qt.AlignHCenter }
+          Text { text: root.tr("noAgents"); visible: root.agentList.length === 0; color: root.dim; Layout.alignment: Qt.AlignHCenter }
           RowLayout {
             Layout.fillWidth: true
             Layout.topMargin: 4
@@ -944,15 +946,19 @@ Panel {
             Layout.rightMargin: 10
             spacing: 6
             Text { text: root.tr("character"); color: root.foreground; font.pixelSize: 14; font.bold: true }
-            RowLayout {
+            // Grade de 3: cinco cartões numa linha cortariam os nomes
+            GridLayout {
               Layout.fillWidth: true
-              spacing: 4
+              columns: 3
+              columnSpacing: 4
+              rowSpacing: 4
               Repeater {
                 model: ["computer", "cat", "robot", "dog"]
                 delegate: Rectangle {
                   id: characterCard
                   required property string modelData
                   Layout.fillWidth: true
+                  Layout.preferredWidth: 1
                   implicitHeight: 70
                   radius: 6
                   color: Qt.alpha(root.foreground, root.character === modelData ? 0.16 : 0.05)

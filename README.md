@@ -40,7 +40,8 @@ the home pet is larger and keeps its square proportions:
   tokens per model.
 - **Pedido** — opens by itself when a session asks for permission: project,
   the requested command (`Bash: npm run migrate`) and how long it has waited.
-- **Agentes** — every agent Omarchy tracks, with a switch to hide it (and its
+- **Agentes** — every agent Omarchy tracks that has usage data (sessions,
+  prompts, limits, a balance or a plan), with a switch to hide it (and its
   sessions and gauges) from the other screens, and the **discreet mode** switch:
   no notifications and no blinking icon. **Idioma** switches between Portuguese
   and English (automatic follows your system `LANG`). **Sessões** shows whether the session

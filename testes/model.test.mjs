@@ -157,6 +157,13 @@ const usageData = [
   { id: "fireworks", limits: [] },
 ]
 expect("usage lists agents with data", Model.usageRecords(usageData, []).map(record => record.id), ["claude", "codex"])
+// Omarchy 4.5 manda todo provedor que conhece; plano só conta quando pronto
+expect("usage ignores providers without data", Model.usageRecords([
+  { id: "fireworks", tierLabel: "Prepaid", usageStatusText: "Fireworks unavailable", limits: [] },
+  { id: "deepseek", limits: [], accounts: [] },
+  { id: "cursor", ready: true, tierLabel: "Pro", limits: [] },
+  { id: "openrouter", balance: { amount: 5 }, limits: [] },
+], []).map(record => record.id), ["cursor", "openrouter"])
 expect("usage hides hidden agents", Model.usageRecords(usageData, ["codex"]).map(record => record.id), ["claude"])
 const days = [{ date: "2026-10-24", messageCount: 50 }, { date: "2026-10-25", messageCount: 200 }]
 expect("day rows scale to the busiest day", Model.dayRows(days, "2026-10-25"), [
