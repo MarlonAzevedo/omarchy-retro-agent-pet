@@ -193,6 +193,7 @@ test('C30: política lista leituras, gravações e remoção', () => {
   for (const term of ['sessions/', 'day/', 'focus.json', 'config.json', 'Agents', 'characters/',
     '.claude/settings.json', '.codex/hooks.json', '.bak.', 'internet', 'Como apagar'])
     assert.ok(policy.includes(term), term)
+  assert.match(policy, /O código do pet não envia[^.\n]*internet/)
 })
 
 test('C31: README liga política e descreve formatos', () => {

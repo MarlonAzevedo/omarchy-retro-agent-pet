@@ -98,6 +98,7 @@ Panel {
   }
   Process {
     id: characterScan
+    objectName: "characterScan"
     command: ["find", root.builtinCharactersDir, root.charactersDir, "-maxdepth", "1", "-name", "*.json", "-printf", "%p\\n"]
     stderr: StdioCollector { waitForEnd: true }
     stdout: StdioCollector {

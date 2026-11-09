@@ -1,5 +1,7 @@
 import QtQuick
 import QtTest
+import QtCore
+import Quickshell
 
 Item {
   id: test
@@ -23,11 +25,23 @@ Item {
     when: windowShown && loader.status === Loader.Ready
 
     function test_choosing_user_character() {
+      var configHome = StandardPaths.writableLocation(StandardPaths.GenericConfigLocation)
+      Quickshell.envOverrides = { XDG_CONFIG_HOME: configHome }
+      Quickshell.readFiles = true
+      loader.active = false
+      loader.active = true
+      tryCompare(loader, "status", Loader.Ready)
       var panel = loader.item
       panel.usageRecords = [{ id: "claude", todayPrompts: 1, limits: [] }]
-      panel.characters = [
-        { id: "computer", name: { pt: "Computador", en: "Computer" } },
-        { id: "custom", name: { pt: "Meu pet", en: "My pet" } } ]
+      var userPath = configHome + "/agent-pet/characters/custom.json"
+      var scan = test.find(panel, "characterScan")
+      verify(!!scan, "Busca de personagens ausente")
+      compare(scan.command[0], "find")
+      compare(scan.command[2], configHome + "/agent-pet/characters")
+      scan.stdout.text = panel.builtinCharactersDir + "/computer.json\n" + userPath + "\n"
+      scan.stdout.streamFinished()
+      tryVerify(function() { return panel.characters.some(function(item) { return item.id === "custom" }) })
+      compare(panel.characters.filter(function(item) { return item.id === "custom" })[0].name.pt, "Meu pet")
       panel.config = { character: "computer", language: "pt" }
       panel.screen = "agents"
       wait(100)
@@ -52,6 +66,20 @@ Item {
       mouseMove(area, 80, 20)
       mouseMove(area, 20, 20)
       compare(panel.petState, "petted")
+    }
+
+    function test_discreet_hides_balloon() {
+      var panel = loader.item
+      panel.usageRecords = [{ id: "claude", todayPrompts: 1, limits: [] }]
+      panel.screen = "home"
+      panel.config = { language: "pt", discreet: false }
+      panel.daily = { completed_responses: 0, active_seconds: 0 }
+      panel.builtinRecadoText = "[normal]\nOi"
+      var balloon = test.find(panel, "recadoBalloon")
+      verify(!!balloon, "Balão ausente")
+      verify(balloon.visible, "Balão deveria aparecer com recado")
+      panel.config = { language: "pt", discreet: true }
+      verify(!balloon.visible, "Modo discreto deveria ocultar o balão")
     }
   }
 }
