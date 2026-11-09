@@ -19,6 +19,9 @@ All notable changes to Retro Agent Pet are documented here. The format is based 
 ### Changed
 
 - The Robot character is now called ET; its id stays `robot`, so saved choices keep working.
+- Messages stay at least a minute before changing with the pet's state, so they
+  can be read while an agent works; permission requests and limits still switch
+  them right away.
 
 ### Fixed
 

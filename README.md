@@ -31,8 +31,9 @@ the home pet is larger and keeps its square proportions:
   you focus and a notification marks each step. The timer lives in
   `~/.local/state/agent-pet/focus.json`, so it keeps running with the panel
   closed or the shell restarted. Move the pointer back and forth over the pet
-  to pet it. Its face and message reflect today's activity; the message changes
-  with the state or after ten minutes. Fireworks mark a completed session,
+  to pet it. Its face and message reflect today's activity; each message stays
+  at least a minute and changes with the state (a permission request or limit
+  right away) or after ten minutes. Fireworks mark a completed session,
   the end of a focus timer and each 25 completed replies. Discreet mode keeps
   fireworks off the bar icon and hides the message. Only the selected agent's
   limits put the pet in the limit state; pick another agent and it calms down.

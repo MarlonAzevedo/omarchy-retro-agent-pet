@@ -100,9 +100,18 @@ test('C14: seção ou dez minutos trocam a frase sem repetição', () => {
   const sections = { normal: ['A', 'B'] }
   assert.equal(Model.recadoShouldChange('normal', 'normal', 0, 599999), false)
   assert.equal(Model.recadoShouldChange('normal', 'normal', 0, 600000), true)
-  assert.equal(Model.recadoShouldChange('normal', 'animado', 0, 1), true)
+  assert.equal(Model.recadoShouldChange('normal', 'animado', 0, 60000), true)
   assert.equal(Model.pickRecado(sections, 'normal', 'A', 0), 'B')
   assert.equal(Model.pickRecado(sections, 'normal', 'B', 1), 'A')
+})
+
+// Regressão: o recado trocava a cada virada trabalhando/parado e mal dava para ler
+test('recado fica ao menos 1 minuto; pedido e limite trocam na hora', () => {
+  assert.equal(Model.recadoShouldChange('trabalhando', 'normal', 0, 59999), false)
+  assert.equal(Model.recadoShouldChange('normal', 'trabalhando', 0, 60000), true)
+  assert.equal(Model.recadoShouldChange('normal', 'pedido', 0, 1), true)
+  assert.equal(Model.recadoShouldChange('trabalhando', 'limite', 0, 1), true)
+  assert.equal(Model.recadoShouldChange('', 'normal', 0, 1), true)
 })
 
 test('C15: arquivo do usuário substitui o embutido por idioma', () => {

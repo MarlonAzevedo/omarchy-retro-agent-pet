@@ -136,8 +136,10 @@ function recadoSection(state, currentMood) {
   return states[state] || (["idle", "petted", "celebrate"].indexOf(state) >= 0 ? currentMood || "normal" : "")
 }
 
+// Recado fica ao menos 1 min; pedido e limite trocam na hora
 function recadoShouldChange(previous, current, lastAt, now) {
-  return previous !== current || now - lastAt >= 600000
+  if (previous === current) return now - lastAt >= 600000
+  return !previous || current === "pedido" || current === "limite" || now - lastAt >= 60000
 }
 
 function pickRecado(sections, section, previous, seed) {
