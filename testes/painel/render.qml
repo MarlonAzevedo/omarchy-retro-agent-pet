@@ -2,6 +2,7 @@
 // Uso: QT_QPA_PLATFORM=offscreen qml6 -I testes/painel/imports testes/painel/render.qml -- <pasta-de-saída>
 import QtQuick
 import QtQuick.Window
+import Quickshell
 Window {
   id: w
   width: 400; height: 700; visible: true; color: "#000"
@@ -18,6 +19,13 @@ Window {
     if (!item) return null
     if (item.objectName === "card") return item
     for (var i = 0; i < item.children.length; i++) { var f = findCard(item.children[i]); if (f) return f }
+    return null
+  }
+  function findNamed(item, name) {
+    if (!item) return null
+    if (item.objectName === name) return item
+    var list = item.data || item.children || []
+    for (var i = 0; i < list.length; i++) { var f = findNamed(list[i], name); if (f) return f }
     return null
   }
   Timer {
@@ -44,6 +52,12 @@ Window {
         p.manifest = ({ name: "Retro Agent Pet", version: "0.3.0", author: "Marlon Azevedo", license: "MIT", homepage: "https://github.com/MarlonAzevedo/omarchy-retro-agent-pet" })
         p.daily = ({ completed_responses: 12, active_seconds: 5400 })
         p.hooksState = "missing"
+        // Personagens e recados vêm dos JSON reais; o Process de teste não roda o find
+        Quickshell.readFiles = true
+        var scan = w.findNamed(p, "characterScan")
+        scan.stdout.text = ["computer", "cat", "robot", "dog", "axolotl"].map(function(id) {
+          return p.builtinCharactersDir + "/" + id + ".json" }).join("\n") + "\n"
+        scan.stdout.streamFinished()
         return
       }
       // Passos ímpares trocam a tela; pares capturam (o grab desenha no quadro seguinte)
@@ -57,6 +71,12 @@ Window {
         p.screen = parts[0]
         p.config = ({ hidden_agents: ["fireworks"], language: english ? "en" : "pt", character: character })
         p.selectedAgent = parts[1] || ""
+        // Leitura real do dia falha fora do shell e zeraria o resumo; o stub síncrono apaga o recado ao trocar o personagem
+        p.daily = ({ completed_responses: 12, active_seconds: 5400 })
+        var recados = new XMLHttpRequest()
+        recados.open("GET", "file://" + p.builtinCharactersDir + "/" + character + "/recados." + (english ? "en" : "pt") + ".txt", false)
+        recados.send()
+        p.builtinRecadoText = recados.responseText
         if (parts[1] === "many") p.sessions = Array.from({ length: 30 }, function(_, i) {
           return { session_id: "session-" + i, cwd: "/project/session-" + i, status: "idle", updated_at: now - i }
         })
