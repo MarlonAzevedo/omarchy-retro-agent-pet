@@ -1,0 +1,44 @@
+[trabalhando]
+Minhas brânquias balançam enquanto você trabalha.
+Mais uma ideia tomando forma.
+Sigo aqui, de olho no progresso.
+
+[pedido]
+Um pedido apareceu na superfície.
+Preciso da sua atenção um instante.
+Uma permissão está pendente.
+
+[limite]
+A água está ficando rasa: limite próximo.
+Vale conferir o uso antes de seguir.
+A reserva está ficando curta.
+
+[foco]
+Vou flutuar aqui até o foco terminar.
+O foco está valendo.
+Vamos manter o ritmo.
+
+[dormindo]
+Hora de descansar no fundo do lago.
+Estou em modo descanso.
+Até já; vou fechar os olhos.
+
+[animado]
+Hoje minhas brânquias estão em festa!
+Gosto desse ritmo.
+O dia ganhou energia.
+
+[normal]
+Flutuando tranquilo por aqui.
+Tudo tranquilo deste lado.
+Pode contar comigo.
+
+[cansado]
+Acho que preciso boiar um pouco.
+Já trabalhamos bastante hoje.
+Hora de respirar um pouco.
+
+[emburrado]
+Estou parado na superfície esperando sua decisão.
+Essa decisão não se resolve sozinha.
+Vou esperar você responder.

@@ -18,8 +18,13 @@ Panel {
   readonly property string stateHome: Quickshell.env("XDG_STATE_HOME") || home + "/.local/state"
   readonly property string sessionsDir: stateHome + "/agent-pet/sessions"
   readonly property string configPath: (Quickshell.env("XDG_CONFIG_HOME") || home + "/.config") + "/agent-pet/config.json"
+  readonly property string charactersDir: (Quickshell.env("XDG_CONFIG_HOME") || home + "/.config") + "/agent-pet/characters"
+  readonly property string builtinCharactersDir: Qt.resolvedUrl("characters").toString().replace("file://", "")
   property var config: ({})
-  readonly property string character: Model.characterId(config.character)
+  property var characterFiles: []
+  property var characters: []
+  readonly property string character: Model.characterId(config.character, characters)
+  readonly property var characterDefinition: characters.filter(function(item) { return item.id === root.character })[0] || null
   readonly property var hiddenAgents: Array.isArray(config.hidden_agents) ? config.hidden_agents : []
   // Modo discreto: sem notificações e sem piscar o ícone
   readonly property bool discreet: config.discreet === true
@@ -39,6 +44,17 @@ Panel {
   property var sessions: []
   property var usageRecords: []
   property var daily: ({ date: "", completed_responses: 0, active_seconds: 0 })
+  property string dailyObservedPath: ""
+  readonly property string currentMood: Model.mood(shownSessions, allLimits, daily, nowMs)
+  property var lastCelebration: null
+  property var petting: null
+  property var builtinRecadoText: null
+  property var userRecadoText: null
+  readonly property var recados: Model.chooseRecados(userRecadoText, builtinRecadoText)
+  readonly property string currentRecadoSection: Model.recadoSection(petState, currentMood)
+  property string recadoText: ""
+  property string shownRecadoSection: ""
+  property double recadoChangedAt: 0
   // Nome, versão, autor, licença e link da tela Sobre
   property var manifest: ({})
   property double nowMs: Date.now()
@@ -80,6 +96,41 @@ Panel {
       onStreamFinished: root.sessionFiles = Model.jsonFiles(text)
     }
   }
+  Process {
+    id: characterScan
+    command: ["find", root.builtinCharactersDir, root.charactersDir, "-maxdepth", "1", "-name", "*.json", "-printf", "%p\\n"]
+    stderr: StdioCollector { waitForEnd: true }
+    stdout: StdioCollector {
+      waitForEnd: true
+      onStreamFinished: {
+        var found = Model.jsonFiles(text)
+        if (JSON.stringify(found) !== JSON.stringify(root.characterFiles)) root.characterFiles = found
+      }
+    }
+  }
+  Instantiator {
+    id: characterInstantiator
+    model: root.characterFiles
+    delegate: CharacterRecord {
+      required property var modelData
+      path: modelData
+      onDefinitionChanged: root.collectCharacters()
+    }
+    onObjectAdded: root.collectCharacters()
+    onObjectRemoved: root.collectCharacters()
+  }
+  function collectCharacters() {
+    var builtins = []
+    var user = []
+    for (var i = 0; i < characterInstantiator.count; i++) {
+      var record = characterInstantiator.objectAt(i)
+      if (!record || !record.definition) continue
+      if (record.path.indexOf(root.builtinCharactersDir + "/") === 0) builtins.push(record.definition)
+      else user.push(record.definition)
+    }
+    root.characters = Model.characterList(builtins, user)
+    Model.setCharacters(builtins, user)
+  }
   // Uso e limites vêm do Main.qml do widget Agents do Omarchy: ele roda os coletores
   // e descobre os registros, então o Agents pode ficar desativado na barra
   Loader {
@@ -120,8 +171,18 @@ Panel {
     usageRecords = Model.keepLimits(usageRecords, result, Date.now(), 1800000)
   }
   function readDaily() {
-    dailyFile.path = stateHome + "/agent-pet/day/" + Qt.formatDate(new Date(), "yyyy-MM-dd") + ".json"
+    var path = stateHome + "/agent-pet/day/" + Qt.formatDate(new Date(), "yyyy-MM-dd") + ".json"
+    if (dailyFile.path !== path) root.daily = ({ date: "", completed_responses: 0, active_seconds: 0 })
+    dailyFile.path = path
     dailyFile.reload()
+  }
+  function acceptDaily(next) {
+    if (root.dailyObservedPath !== dailyFile.path) {
+      root.dailyObservedPath = dailyFile.path
+      root.lastCelebration = { state: root.computedPetState, focus: root.focusInfo ? root.focusInfo.phase : "",
+        responses: Number(next.completed_responses || 0) }
+    }
+    root.daily = next
   }
 
   FileView {
@@ -130,9 +191,40 @@ Panel {
     printErrors: false
     onFileChanged: reload()
     onLoaded: {
-      try { root.daily = JSON.parse(String(text() || "{}")) }
-      catch (error) { root.daily = ({ date: "", completed_responses: 0, active_seconds: 0 }) }
+      try {
+        var value = JSON.parse(String(text() || "{}"))
+        root.acceptDaily(value && typeof value === "object" && !Array.isArray(value) ? value : { date: "", completed_responses: 0, active_seconds: 0 })
+      }
+      catch (error) { root.acceptDaily({ date: "", completed_responses: 0, active_seconds: 0 }) }
     }
+    onLoadFailed: root.acceptDaily({ date: "", completed_responses: 0, active_seconds: 0 })
+  }
+  FileView {
+    path: root.builtinCharactersDir + "/" + root.character + "/recados." + root.language + ".txt"
+    watchChanges: true
+    printErrors: false
+    onFileChanged: reload()
+    onLoaded: root.builtinRecadoText = text()
+    onLoadFailed: root.builtinRecadoText = null
+  }
+  FileView {
+    path: root.charactersDir + "/" + root.character + "/recados." + root.language + ".txt"
+    watchChanges: true
+    printErrors: false
+    onFileChanged: reload()
+    onLoaded: root.userRecadoText = text()
+    onLoadFailed: root.userRecadoText = null
+  }
+  onCharacterChanged: { builtinRecadoText = null; userRecadoText = null; shownRecadoSection = ""; recadoText = "" }
+  onLanguageChanged: { builtinRecadoText = null; userRecadoText = null; shownRecadoSection = ""; recadoText = "" }
+  onRecadosChanged: { shownRecadoSection = ""; refreshRecado() }
+  onCurrentRecadoSectionChanged: refreshRecado()
+  function refreshRecado() {
+    var section = root.currentRecadoSection
+    if (!Model.recadoShouldChange(root.shownRecadoSection, section, root.recadoChangedAt, root.nowMs) && root.recadoText) return
+    root.recadoText = Model.pickRecado(root.recados, section, root.recadoText, root.nowMs)
+    root.shownRecadoSection = section
+    root.recadoChangedAt = root.nowMs
   }
   FileView {
     path: Qt.resolvedUrl("manifest.json").toString().replace("file://", "")
@@ -223,6 +315,7 @@ Panel {
   // Avisa ao entrar em cada etapa; a primeira leitura (início ou shell reiniciado) só registra
   onFocusInfoChanged: {
     var info = root.focusInfo
+    root.observeCelebration()
     var key = info ? root.pomodoro.started_at + ":" + info.phase + ":" + info.round : ""
     if (key === root.focusKey) return
     var first = root.focusKey === ""
@@ -243,7 +336,15 @@ Panel {
       root.nowMs = Date.now()
       if (!sessionScan.running) sessionScan.running = true
       root.readDaily()
+      if (Model.recadoShouldChange(root.shownRecadoSection, root.currentRecadoSection, root.recadoChangedAt, root.nowMs)) root.refreshRecado()
     }
+  }
+  Timer {
+    interval: 5000
+    running: true
+    repeat: true
+    triggeredOnStart: true
+    onTriggered: if (!characterScan.running) characterScan.running = true
   }
 
   // Fica na barra com sessões ou com uso registrado, no lugar do widget Agents
@@ -261,6 +362,7 @@ Panel {
   }
   onOpenedChanged: {
     if (!opened) return
+    if (!characterScan.running) characterScan.running = true
     if (root.usage) root.usage.refreshLimits()
     if (!hooksSetup.running) hooksCheck.running = true
   }
@@ -268,21 +370,40 @@ Panel {
   onAttentionChanged: root.screen = root.attention ? "attention" : (root.screen === "attention" ? "home" : root.screen)
   Component.onCompleted: {
     root.petState = root.computedPetState
+    root.observeCelebration()
     if (root.attention) root.screen = "attention"
   }
-  onComputedPetStateChanged: {
-    if (root.petState === "working" && root.computedPetState === "idle") {
-      root.petState = "done"
-      doneTimer.restart()
-    } else {
-      doneTimer.stop()
-      root.petState = root.computedPetState
+  onDailyChanged: root.observeCelebration()
+  function observeCelebration() {
+    var current = { state: root.computedPetState, focus: root.focusInfo ? root.focusInfo.phase : "",
+      responses: Number(root.daily.completed_responses || 0) }
+    var trigger = Model.celebrationTrigger(root.lastCelebration, current)
+    root.lastCelebration = current
+    if (trigger) {
+      pettedTimer.stop()
+      root.petState = "celebrate"
+      celebrationTimer.restart()
     }
+  }
+  onComputedPetStateChanged: {
+    root.observeCelebration()
+    if (root.computedPetState === "attention" || root.computedPetState === "limit") {
+      celebrationTimer.stop()
+      pettedTimer.stop()
+      root.petState = root.computedPetState
+    } else if (root.petState !== "celebrate" && root.petState !== "petted") root.petState = root.computedPetState
   }
 
   Timer {
-    id: doneTimer
-    interval: 1800
+    id: celebrationTimer
+    objectName: "celebrationTimer"
+    interval: 2400
+    onTriggered: root.petState = root.computedPetState
+  }
+  Timer {
+    id: pettedTimer
+    objectName: "pettedTimer"
+    interval: 2000
     onTriggered: root.petState = root.computedPetState
   }
 
@@ -485,11 +606,14 @@ Panel {
     bar: root.bar
     iconComponent: Component {
       Pet {
+        objectName: "barPet"
         anchors.centerIn: parent
         width: 16
         height: 16
         character: root.character
-        petState: root.petState
+        definition: root.characterDefinition
+        petState: root.discreet && root.petState === "celebrate" ? root.computedPetState : root.petState
+        mood: root.currentMood
         inkColor: root.surface
         bodyColor: root.foreground
         faceColor: Commons.Color.accent
@@ -573,18 +697,58 @@ Panel {
           visible: root.screen === "home"
           Layout.fillWidth: true
           spacing: 12
+          Rectangle {
+            objectName: "recadoBalloon"
+            visible: !root.discreet && root.recadoText !== ""
+            Layout.fillWidth: true
+            Layout.leftMargin: 12
+            Layout.rightMargin: 12
+            implicitHeight: recadoLabel.implicitHeight + 16
+            radius: 8
+            color: Qt.alpha(root.foreground, 0.08)
+            Text {
+              id: recadoLabel
+              anchors.fill: parent
+              anchors.margins: 8
+              text: root.recadoText
+              textFormat: Text.PlainText
+              color: root.foreground
+              font.pixelSize: 12
+              wrapMode: Text.Wrap
+              horizontalAlignment: Text.AlignHCenter
+            }
+          }
           Pet {
+            objectName: "homePet"
             Layout.alignment: Qt.AlignHCenter
             Layout.preferredWidth: root.focusInfo ? 160 : 192
             Layout.preferredHeight: Layout.preferredWidth
             character: root.character
+            definition: root.characterDefinition
             petState: root.petState
+            mood: root.currentMood
             inkColor: root.surface
             outlineColor: root.dim
             bodyColor: root.foreground
             faceColor: Commons.Color.accent
             accentColor: root.petState === "attention" ? root.urgent : Commons.Color.accent
             warningColor: root.urgent
+            MouseArea {
+              objectName: "pettingArea"
+              anchors.fill: parent
+              hoverEnabled: true
+              acceptedButtons: Qt.NoButton
+              onPositionChanged: function(mouse) {
+                root.petting = Model.pettingDetected(root.petting, mouse.x, Date.now(), root.computedPetState)
+                if (root.petting.gesture && root.computedPetState !== "attention" && root.computedPetState !== "limit") {
+                  root.petting = null
+                  celebrationTimer.stop()
+                  root.petState = "petted"
+                  pettedTimer.restart()
+                }
+              }
+              onExited: root.petting = null
+            }
           }
           AgentTabs {}
           GridLayout {
@@ -660,7 +824,7 @@ Panel {
           Text {
             Layout.fillWidth: true
             horizontalAlignment: Text.AlignHCenter
-            text: root.trf("todaySummary", [Number(root.daily.completed_responses || 0), Model.formatDuration(root.daily.active_seconds || 0)])
+            text: root.trf("todaySummary", [Number(root.daily.completed_responses || 0), Model.formatDuration(root.daily.active_seconds || 0), root.tr("mood" + root.currentMood.charAt(0).toUpperCase() + root.currentMood.slice(1))])
             color: root.dim
             font.pixelSize: 12
           }
@@ -953,16 +1117,16 @@ Panel {
               columnSpacing: 4
               rowSpacing: 4
               Repeater {
-                model: ["computer", "cat", "robot", "dog", "axolotl"]
+                model: root.characters
                 delegate: Rectangle {
                   id: characterCard
-                  required property string modelData
+                  required property var modelData
                   Layout.fillWidth: true
-                  Layout.preferredWidth: 1
+                  Layout.preferredWidth: 80
                   implicitHeight: 70
                   radius: 6
-                  color: Qt.alpha(root.foreground, root.character === modelData ? 0.16 : 0.05)
-                  border.width: root.character === modelData ? 1 : 0
+                  color: Qt.alpha(root.foreground, root.character === modelData.id ? 0.16 : 0.05)
+                  border.width: root.character === modelData.id ? 1 : 0
                   border.color: Commons.Color.accent
                   Column {
                     anchors.centerIn: parent
@@ -970,8 +1134,10 @@ Panel {
                     Pet {
                       anchors.horizontalCenter: parent.horizontalCenter
                       width: 32; height: 32
-                      character: characterCard.modelData
+                      character: characterCard.modelData.id
+                      definition: characterCard.modelData
                       petState: root.petState
+                      mood: root.currentMood
                       inkColor: root.surface
                       outlineColor: root.dim
                       bodyColor: root.foreground
@@ -979,9 +1145,17 @@ Panel {
                       accentColor: Commons.Color.accent
                       warningColor: root.urgent
                     }
-                    Text { text: root.tr(characterCard.modelData); color: root.foreground; font.pixelSize: 10; anchors.horizontalCenter: parent.horizontalCenter }
+                    Text {
+                      text: Model.characterName(characterCard.modelData, root.language)
+                      width: characterCard.width - 8
+                      color: root.foreground
+                      font.pixelSize: 10
+                      elide: Text.ElideRight
+                      horizontalAlignment: Text.AlignHCenter
+                      anchors.horizontalCenter: parent.horizontalCenter
+                    }
                   }
-                  MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: root.setConfig("character", characterCard.modelData) }
+                  MouseArea { objectName: "choose-" + characterCard.modelData.id; anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: root.setConfig("character", characterCard.modelData.id) }
                 }
               }
             }
@@ -1040,7 +1214,9 @@ Panel {
             Layout.preferredWidth: 80
             Layout.preferredHeight: 80
             character: root.character
+            definition: root.characterDefinition
             petState: "idle"
+            mood: root.currentMood
             inkColor: root.surface
             outlineColor: root.dim
             bodyColor: root.foreground

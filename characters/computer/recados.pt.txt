@@ -1,0 +1,44 @@
+[trabalhando]
+Meus circuitos estão acompanhando seu trabalho.
+Mais uma ideia tomando forma.
+Sigo aqui, de olho no progresso.
+
+[pedido]
+Uma decisão apareceu na minha tela.
+Preciso da sua atenção um instante.
+Uma permissão está pendente.
+
+[limite]
+Meu indicador de limite acendeu.
+Vale conferir o uso antes de seguir.
+A reserva está ficando curta.
+
+[foco]
+Processando uma rodada de cada vez.
+O foco está valendo.
+Vamos manter o ritmo.
+
+[dormindo]
+Vou desligar a tela por um instante.
+Estou em modo descanso.
+Até já; vou fechar os olhos.
+
+[animado]
+Meus LEDs estão brilhando hoje!
+Gosto desse ritmo.
+O dia ganhou energia.
+
+[normal]
+Sistema tranquilo por aqui.
+Tudo tranquilo deste lado.
+Pode contar comigo.
+
+[cansado]
+Minha bateria pede uma pausa.
+Já trabalhamos bastante hoje.
+Hora de respirar um pouco.
+
+[emburrado]
+Há um pedido parado na tela.
+Essa decisão não se resolve sozinha.
+Vou esperar você responder.

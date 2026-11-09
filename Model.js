@@ -5,7 +5,8 @@ var TEXTS = {
   pt: {
     character: "Personagem", computer: "Computador", cat: "Gato", robot: "Robô", dog: "Cachorro", axolotl: "Axolote",
     noLimitData: "Sem dados de limite", focus: "Foco", focusRound: "Foco {0}/{1}", breakRound: "Pausa {0}/{1}", paused: " · pausado",
-    resume: "Continuar", pause: "Pausar", stop: "Parar", todaySummary: "Hoje · {0} respostas · {1}",
+    resume: "Continuar", pause: "Pausar", stop: "Parar", todaySummary: "Hoje · {0} respostas · {1} · {2}",
+    moodAnimado: "animado", moodNormal: "normal", moodCansado: "cansado", moodEmburrado: "emburrado",
     sessions: "Sessões", noSessions: "Nenhuma sessão ativa", sessionsSummary: "● {0} rodando · {1} no total",
     limits: "Limites", depletion: "no ritmo atual, acaba às {0}", limit: "Limite", usage: "Uso", plan: "Assinatura",
     usageToday: "Hoje · {0} prompts · {1} · {2} tokens", oneSession: "{0} sessão", manySessions: "{0} sessões",
@@ -26,7 +27,8 @@ var TEXTS = {
   en: {
     character: "Character", computer: "Computer", cat: "Cat", robot: "Robot", dog: "Dog", axolotl: "Axolotl",
     noLimitData: "No limit data", focus: "Focus", focusRound: "Focus {0}/{1}", breakRound: "Break {0}/{1}", paused: " · paused",
-    resume: "Resume", pause: "Pause", stop: "Stop", todaySummary: "Today · {0} replies · {1}",
+    resume: "Resume", pause: "Pause", stop: "Stop", todaySummary: "Today · {0} replies · {1} · {2}",
+    moodAnimado: "excited", moodNormal: "fine", moodCansado: "tired", moodEmburrado: "grumpy",
     sessions: "Sessions", noSessions: "No active sessions", sessionsSummary: "● {0} running · {1} total",
     limits: "Limits", depletion: "at this pace, runs out at {0}", limit: "Limit", usage: "Usage", plan: "Subscription",
     usageToday: "Today · {0} prompts · {1} · {2} tokens", oneSession: "{0} session", manySessions: "{0} sessions",
@@ -87,6 +89,71 @@ function petState(sessions, limits, now, focusing) {
   if (focusing) return "focus"
   if ((sessions || []).some(function(session) { return session.status === "working" })) return "working"
   return "idle"
+}
+
+function mood(sessions, limits, daily, now) {
+  var current = now === undefined ? Date.now() : Number(now)
+  if ((sessions || []).some(function(session) {
+    return session.status === "attention" && Number(session.activity_started_at) > 0 &&
+      current - Number(session.activity_started_at) > 300000
+  })) return "emburrado"
+  var date = new Date(current)
+  var today = date.getFullYear() + "-" + String(date.getMonth() + 1).padStart(2, "0") + "-" + String(date.getDate()).padStart(2, "0")
+  var summary = daily && (!daily.date || daily.date === today) ? daily : {}
+  if (Number(summary.active_seconds || 0) > 14400 || alarmingLimit(limits, 75, current)) return "cansado"
+  return Number(summary.completed_responses || 0) >= 20 ? "animado" : "normal"
+}
+
+function pettingDetected(previous, x, now, state) {
+  if (state === "attention" || state === "limit") return { lastX: x, lastDirection: 0, turns: 0, firstAt: now, gesture: false }
+  var old = previous || { lastX: x, lastDirection: 0, turns: 0, firstAt: now }
+  if (now - old.firstAt > 1500) old = { lastX: x, lastDirection: 0, turns: 0, firstAt: now }
+  var direction = x > old.lastX ? 1 : x < old.lastX ? -1 : 0
+  var turns = old.turns + (direction && old.lastDirection && direction !== old.lastDirection ? 1 : 0)
+  return { lastX: x, lastDirection: direction || old.lastDirection, turns: turns, firstAt: old.firstAt, gesture: turns >= 3 }
+}
+
+var RECADO_SECTIONS = ["trabalhando", "pedido", "limite", "foco", "dormindo", "animado", "normal", "cansado", "emburrado"]
+function parseRecados(text) {
+  var result = {}
+  var section = ""
+  String(text || "").split(/\r?\n/).forEach(function(line) {
+    var value = line.trim()
+    if (!value || value.charAt(0) === "#") return
+    var match = value.match(/^\[([^\]]+)\]$/)
+    if (match) { section = RECADO_SECTIONS.indexOf(match[1]) >= 0 ? match[1] : ""; if (section && !result[section]) result[section] = []; return }
+    if (section) result[section].push(value)
+  })
+  return result
+}
+
+function chooseRecados(userText, builtinText) {
+  return parseRecados(userText !== null && userText !== undefined ? userText : builtinText)
+}
+
+function recadoSection(state, currentMood) {
+  var states = { working: "trabalhando", attention: "pedido", limit: "limite", focus: "foco", sleep: "dormindo" }
+  return states[state] || (["idle", "petted", "celebrate"].indexOf(state) >= 0 ? currentMood || "normal" : "")
+}
+
+function recadoShouldChange(previous, current, lastAt, now) {
+  return previous !== current || now - lastAt >= 600000
+}
+
+function pickRecado(sections, section, previous, seed) {
+  var list = sections && sections[section] || []
+  if (!list.length) return ""
+  var choices = list.length > 1 ? list.filter(function(value) { return value !== previous }) : list
+  if (!choices.length) choices = list
+  return choices[Math.abs(Math.floor(Number(seed) || 0)) % choices.length]
+}
+
+function celebrationTrigger(previous, current) {
+  if (!previous || !current || current.state === "attention" || current.state === "limit") return ""
+  if (previous.state === "working" && current.state === "idle") return "session"
+  if (previous.focus !== "done" && current.focus === "done") return "focus"
+  if (Math.floor(Number(current.responses || 0) / 25) > Math.floor(Number(previous.responses || 0) / 25)) return "responses"
+  return ""
 }
 
 function alarmingLimit(limits, threshold, now) {
@@ -331,193 +398,144 @@ function claimOnce(key) {
   return true
 }
 
-// Sprite 16x16 do computador antigo: O/E/C tinta, B gabinete, F tela, A destaque, X alerta, Z sono
-function characterId(value) {
-  return ["computer", "cat", "robot", "dog", "axolotl"].indexOf(value) >= 0 ? value : "computer"
+// Definições carregadas pelo painel; sprites ficam nos arquivos characters/*.json.
+var CHARACTERS = []
+
+function characterFromJson(text, filename) {
+  var item
+  try { item = JSON.parse(String(text || "")) } catch (error) { return null }
+  if (!item || typeof item !== "object" || Array.isArray(item)) return null
+  var fileId = String(filename || "").split("/").pop().replace(/\.json$/, "")
+  if (!/^[a-z][a-z0-9_-]*$/.test(item.id) || item.id !== fileId) return null
+  if (!item.name || typeof item.name !== "object" || Array.isArray(item.name)) return null
+  if (!Number.isInteger(item.frames) || item.frames < 1 || item.frames > 4) return null
+  if (!Array.isArray(item.base) || item.base.length !== 16 ||
+      !item.base.every(function(row) { return typeof row === "string" && /^[.OECBFAZX]{16}$/.test(row) })) return null
+  function points(value) {
+    return Array.isArray(value) && value.length === 2 && value.every(function(point) {
+      return Array.isArray(point) && point.length === 2 && point.every(function(n) { return Number.isInteger(n) && n >= 0 && n < 16 })
+    })
+  }
+  if (!points(item.eyes) || !points(item.mouth) || !points(item.work) || !/^[OECBFAZX]$/.test(item.face)) return null
+  function validWhen(when) {
+    if (!when || typeof when !== "object" || Array.isArray(when)) return false
+    return Object.keys(when).every(function(key) {
+      if (key === "state") return typeof when[key] === "string"
+      if (key === "frame") return Number.isInteger(when[key]) && when[key] >= 0 && when[key] < item.frames
+      if (key === "phase") return Number.isInteger(when[key]) && when[key] >= 0 && when[key] < item.frames
+      if (key === "awake") return typeof when[key] === "boolean"
+      return false
+    })
+  }
+  if (!Array.isArray(item.overlays) || !item.overlays.every(function(overlay) {
+    return overlay && validWhen(overlay.when) && overlay.rows && typeof overlay.rows === "object" && !Array.isArray(overlay.rows) &&
+      Object.keys(overlay.rows).every(function(y) { return /^(?:[0-9]|1[0-5])$/.test(y) && /^[.OECBFAZX]{16}$/.test(overlay.rows[y]) })
+  })) return null
+  if (!Array.isArray(item.detail) || !item.detail.every(function(detail) {
+    return detail && validWhen(detail.when) && Array.isArray(detail.lines) && detail.lines.every(function(line) {
+      return Array.isArray(line) && line.length === 3 && Number.isInteger(line[0]) && Number.isInteger(line[1]) &&
+        line[0] >= 0 && line[1] >= 0 && line[1] < 32 && typeof line[2] === "string" &&
+        /^[.OECBFAZXHSGD]+$/.test(line[2]) && line[0] + line[2].length <= 32
+    })
+  })) return null
+  return item
 }
 
-function petRows(state, frame, character, detailed) {
-  character = characterId(character)
-  if (detailed) return detailedPetRows(state, frame, character)
-  if (character !== "computer") return characterRows(state, frame, character)
-  var eye = state === "limit" && !frame ? "X" : "E"
-  var upper = state === "sleep" || state === "focus" ? "F" : eye
-  var lower = state === "done" ? "F" : state === "focus" ? "C" : eye
-  var mouth = state === "attention" ? "XX" : "EE"
-  return [
-    state === "attention" && !frame ? ".......XX......." : state === "sleep" ? "......Z..Z......"
-      : state === "working" && !frame ? ".A............A." : "................",
-    "..OOOOOOOOOOOO..",
-    "..OBBBBBBBBBBO..",
-    "..OBOOOOOOOOBO..",
-    "..OBOFFFFFFOBO..",
-    state === "working" && frame ? "..OBOBBBBBBOBO.." : "..OBOFFFFFFOBO..",
-    "..OBOF" + upper + "FF" + upper + "FOBO..",
-    "..OBOF" + lower + "FF" + lower + "FOBO..",
-    "..OBOFF" + mouth + "FFOBO..",
-    "..OBOFFFFFFOBO..",
-    "..OBOOOOOOOOBO..",
-    "..OBBBBAABBBBO..",
-    "..OOOOOOOOOOOO..",
-    "......OOOO......",
-    "....OBBBBBBO....",
-    "....OOOOOOOO...."
-  ]
+function characterList(builtins, user) {
+  var result = []
+  var seen = Object.create(null)
+  var order = ["computer", "cat", "robot", "dog", "axolotl"]
+  var sortedBuiltins = (builtins || []).slice().sort(function(a, b) { return order.indexOf(a.id) - order.indexOf(b.id) })
+  var sortedUser = (user || []).slice().sort(function(a, b) { return a.id.localeCompare(b.id) })
+  ;sortedBuiltins.concat(sortedUser).forEach(function(item) {
+    if (!item || seen[item.id]) return
+    seen[item.id] = true
+    result.push(item)
+  })
+  return result
 }
 
-// Silhuetas de 16×16; expressões e sinais seguem os mesmos estados do computador.
-function characterRows(state, frame, character) {
-  var rows
-  if (character === "cat") rows = [
-    "................", "..OO........OO..", "..OBO......OBO..", "..OBBOOOOOOBBO..",
-    "..OBBBBBBBBBBO..", "..OBBBBBBBBBBO..", "..OBBBBBBBBBBO..", ".AOBBBBBBBBBBOA.",
-    "..OBBBBAABBBBO..", ".AOBBBBBBBBBBOA.", "...OOOOOOOOOO...", "....OBBBBBO.....",
-    "....OBBBBBO..OO.", "....OBBBBBO..BO.", "...OOBBBBBOOOBO.", "...OOOOOOOOOOO.."
-  ]
-  else if (character === "axolotl") rows = [
-    "................", ".A............A.", "..A.OOOOOOOO.A..", "AA.OBBBBBBBBO.AA",
-    "..AOBBBBBBBBOA..", "AAOBBBBBBBBBBOAA", "..OBBBBBBBBBBO..", ".AOBBBBBBBBBBOA.",
-    "...OBBEEEEBBO...", "....OOBBBBOO....", "....OBBBBBBO....", "..OOBBBBBBBBOO..",
-    "..OBOBBBBBBOBO..", "..OOOBBBBBBOOO..", "....OBBBBBBO....", "....OOOOOOOO...."
-  ]
-  else if (character === "dog") rows = [
-    "................", "................", "...OOOOOOOOOO...", ".OOOBBBBBBBBOOO.",
-    ".OBOBBBBBBBBOBO.", ".OBOBBBBBBBBOBO.", ".OBOBBBBBBBBOBO.", ".OOOBBBBBBBBOOO.",
-    "...OBFFAFFFBO...", "...OBFFAAFFBO...", "....OOOOOOOO....", ".....OBBBBO.....",
-    ".....OBBBBO.OO..", ".....OBBBBOOBO..", "....OOBBBBOBO...", "....OOOOOOOO...."
-  ]
-  else rows = [
-    ".......AA.......", ".......OO.......", "...OOOOOOOOOO...", "...OBBBBBBBBO...",
-    ".OOOFFFFFFFFOOO.", ".OBOFFFFFFFFOBO.", ".OBOFFFFFFFFOBO.", ".OOOFFFFFFFFOOO.",
-    "...OFFFFFFFFO...", "...OOOOOOOOOO...", "......OOOO......", "...OOOBBBAOOO...",
-    "...OBOBAABOBO...", "...OOOBBBBOOO...", ".....OO..OO.....", "....OOO..OOO...."
-  ]
-  var face = character === "robot" ? "F" : "B"
-  var eye = state === "limit" && !frame ? "X" : state === "sleep" || state === "focus" ? face : "E"
-  var lower = state === "done" ? face : state === "focus" ? "C" : eye
+function setCharacters(builtins, user) { CHARACTERS = characterList(builtins, user) }
+
+function characterId(value, list) {
+  var available = list || CHARACTERS
+  return available.some(function(item) { return item.id === value }) ? value : "computer"
+}
+
+function characterName(item, lang) {
+  if (!item) return ""
+  return (item.name && (item.name[lang] || item.name.en)) || item.id
+}
+
+function characterDefinition(value) {
+  if (value && typeof value === "object" && Array.isArray(value.base)) return value
+  var id = characterId(value)
+  return CHARACTERS.filter(function(item) { return item.id === id })[0] || null
+}
+
+function matchesWhen(when, state, frame, frames) {
+  if (when.state !== undefined && when.state !== state) return false
+  if (when.frame !== undefined && when.frame !== frame) return false
+  if (when.phase !== undefined && when.phase !== frame % frames) return false
+  if (when.awake !== undefined && when.awake !== (state !== "sleep")) return false
+  return true
+}
+
+function petRows(state, frame, character, detailed, mood) {
+  var item = characterDefinition(character)
+  if (!item) return Array.from({ length: detailed ? 32 : 16 }, function() { return ".".repeat(detailed ? 32 : 16) })
+  var phase = Number(frame) % item.frames || 0
+  var rows = item.base.slice()
   function pixel(x, y, value) { rows[y] = rows[y].slice(0, x) + value + rows[y].slice(x + 1) }
-  ;[5, 10].forEach(function(x) { pixel(x, 6, eye); pixel(x, 7, lower) })
-  if (state === "attention") { pixel(7, 8, "X"); pixel(8, 8, "X") }
-  if (state === "focus") { pixel(3, 6, "A"); pixel(12, 6, "A") }
-  if (state === "working") {
-    pixel(frame ? 9 : 6, 12, "A")
-    pixel(frame ? 6 : 9, 12, face)
-  }
-  if (state === "attention" && !frame) rows[0] = ".......XX......."
-  if (state === "sleep") rows[0] = "......Z..Z......"
-  // Brânquias balançam junto com a animação
-  if (character === "axolotl" && frame % 2) {
-    rows[1] = "A..............A"; rows[3] = ".AAOBBBBBBBBOAA."; rows[5] = ".AOBBBBBBBBBBOA."
-  }
-  if (character === "robot") {
-    var phase = frame % 4
-    var leftUp = state === "idle" ? phase === 1 || phase === 2 : state !== "sleep" && phase % 2 === 0
-    var rightUp = state === "idle" ? phase === 2 || phase === 3 : state !== "sleep" && phase % 2 === 1
-    for (var armY = 10; armY <= 13; armY++) {
-      for (var armX = 1; armX <= 4; armX++) {
-        pixel(armX, armY, "."); pixel(15 - armX, armY, ".")
-      }
+  var override = item.overlays.some(function(overlay) { return matchesWhen(overlay.when, state, phase, item.frames) })
+  if (!override) {
+    var eye = state === "limit" && phase === 0 ? "X" : state === "sleep" || state === "focus" ? item.face : "E"
+    item.eyes.forEach(function(point) {
+      pixel(point[0], point[1], eye)
+      if (point[1] + 1 < 16) pixel(point[0], point[1] + 1, state === "done" ? item.face : state === "focus" ? "C" : eye)
+    })
+    if (state === "attention") item.mouth.forEach(function(point) { pixel(point[0], point[1], "X") })
+    if (state === "working") {
+      var work = item.work[phase % 2]
+      pixel(work[0], work[1], "A")
     }
-    function arm(right, raised) {
-      var x = raised ? 2 : 3
-      var y = raised ? 10 : 11
-      ;["OO", "BO", "OO"].forEach(function(row, offset) {
-        row.split("").forEach(function(color, col) { pixel(right ? 15 - x - col : x + col, y + offset, color) })
-      })
-      pixel(right ? 11 : 4, 12, "O")
+    if (state === "petted") {
+      item.eyes.forEach(function(point) { pixel(point[0], point[1], "F") })
+      item.mouth.forEach(function(point) { pixel(point[0], point[1], "A") })
     }
-    arm(false, leftUp); arm(true, rightUp)
-    if (state === "idle" && phase === 3) {
-      ;[5, 10].forEach(function(x) { pixel(x, 6, "F"); pixel(x, 7, "E") })
+    if (state === "celebrate") {
+      var spark = Number(frame) % 2 || 0
+      pixel(1 + spark, 1, "A"); pixel(14 - spark, 1, "X")
+      pixel(1 + ((spark + 1) % 2), 3, "X"); pixel(14 - ((spark + 1) % 2), 3, "A")
     }
-    if (state === "idle" && phase % 2) rows[0] = ".......FF......."
   }
-  return rows
-}
-
-// A versão ampliada ganha contorno, volume e detalhes sem perder a leitura do ícone.
-function detailedPetRows(state, frame, character) {
-  var small = petRows(state, frame, character)
+  item.overlays.forEach(function(overlay) {
+    if (matchesWhen(overlay.when, state, phase, item.frames))
+      Object.keys(overlay.rows).forEach(function(y) { rows[Number(y)] = overlay.rows[y] })
+  })
+  if (state === "idle" && mood && mood !== "normal") {
+    var face = mood === "animado" ? "A" : mood === "cansado" ? "Z" : "X"
+    item.eyes.forEach(function(point) { pixel(point[0], point[1], face) })
+    if (mood === "emburrado") item.mouth.forEach(function(point) { pixel(point[0], point[1], "X") })
+    if (mood === "animado") item.mouth.forEach(function(point) { pixel(point[0], point[1], "A") })
+  }
+  if (!detailed) return rows
   var pixels = []
-  small.forEach(function(row) {
-    var doubled = row.split("").map(function(pixel) { return pixel + pixel }).join("")
+  rows.forEach(function(row) {
+    var doubled = row.split("").map(function(color) { return color + color }).join("")
     pixels.push(doubled.split(""), doubled.split(""))
   })
-  function dot(x, y, color) { pixels[y][x] = color }
-  function line(x, y, text) { text.split("").forEach(function(color, offset) { dot(x + offset, y, color) }) }
-  function body(x, y, color) { if (pixels[y][x] === "B") dot(x, y, color) }
-  // Luz à esquerda, sombra à direita; somente dentro do corpo.
-  for (var y = 1; y < 31; y++) {
-    for (var x = 1; x < 31; x++) {
-      if (pixels[y][x] !== "B") continue
-      if (pixels[y][x - 1] === "O" || pixels[y - 1][x] === "O") body(x, y, "H")
-      else if (pixels[y][x + 1] === "O" || pixels[y + 1][x] === "O") body(x, y, "S")
-    }
+  for (var y = 1; y < 31; y++) for (var x = 1; x < 31; x++) {
+    if (pixels[y][x] !== "B") continue
+    if (pixels[y][x - 1] === "O" || pixels[y - 1][x] === "O") pixels[y][x] = "H"
+    else if (pixels[y][x + 1] === "O" || pixels[y + 1][x] === "O") pixels[y][x] = "S"
   }
-  if (character === "computer") {
-    line(9, 8, "GGGGGGGGGGGGGG")
-    for (var edge = 10; edge < 20; edge++) dot(23, edge, "D")
-    line(7, 22, "SBSB")
-    line(21, 22, "BSBS")
-    line(14, 23, "AHHA")
-    line(10, 28, "HHHHHHHHHHHH")
-    line(10, 29, "SSSSSSSSSSSS")
-    if (state !== "sleep" && state !== "focus" && state !== "limit") {
-      dot(12, 12, "G"); dot(18, 12, "G")
-    }
-  } else if (character === "cat" || character === "dog") {
-    if (character === "cat") {
-      line(6, 5, "AS"); line(24, 5, "SA")
-      line(6, 6, "AAS"); line(23, 6, "SAA")
-      line(12, 9, "SBBSSBBS")
-      line(3, 15, "EEE"); line(26, 15, "EEE")
-      line(2, 18, "EEE"); line(27, 18, "EEE")
-      line(13, 23, "HHHH")
-      line(12, 24, "HHHHHH")
-      line(12, 25, "HHHHHH")
-      line(12, 26, "HHHHHH")
-      line(12, 28, "SHHS")
-      dot(11, 28, "E"); dot(18, 28, "E")
-      line(26, 26, "HA")
-    } else {
-      line(3, 9, "SS"); line(27, 9, "SS")
-      line(3, 10, "SS"); line(27, 10, "SS")
-      line(3, 11, "SS"); line(27, 11, "SS")
-      line(12, 22, "AAAAAA")
-      line(15, 23, "AH")
-      line(13, 25, "HHHH")
-      line(13, 26, "HHHH")
-      dot(13, 28, "E"); dot(18, 28, "E")
-      dot(26, 25, "H")
-    }
-    line(12, 16, "HHHHHHHH")
-    line(12, 17, character === "dog" ? "HHHEEHHH" : "HHHAAHHH")
-    line(13, 18, "HHEEHH")
-    line(13, 19, "HEHHEH")
-    if (state === "attention") line(14, 17, "XXXX")
-    if (state === "working") line(14, 19, frame ? "AAAA" : "HEEH")
-    if (state !== "sleep" && state !== "focus" && state !== "limit") {
-      dot(10, 12, "H"); dot(20, 12, "H")
-    }
-  } else if (character === "axolotl") {
-    line(6, 15, "AA"); line(24, 15, "AA")
-    line(12, 22, "HHHHHHHH")
-    line(12, 27, "SSSSSSSS")
-    if (state !== "sleep" && state !== "focus" && state !== "limit") {
-      dot(10, 12, "H"); dot(20, 12, "H")
-    }
-  } else {
-    line(14, 0, frame % 2 ? "AGGA" : "AHHA")
-    line(9, 8, "GGGGGGGGGGGGGG")
-    line(9, 17, "DDDDDDDDDDDDDD")
-    line(6, 10, "HS"); line(24, 10, "SH")
-    line(13, 23, "EAAE")
-    line(13, 24, "EAAE")
-    line(13, 26, "SSSSSS")
-    line(8, 30, "HHHHHH"); line(18, 30, "HHHHHH")
-    if (state !== "sleep" && state !== "focus" && state !== "limit" && !(state === "idle" && frame % 4 === 3)) {
-      dot(10, 12, "G"); dot(20, 12, "G")
-    }
-  }
+  if ((!mood || mood === "normal") && state !== "petted" && state !== "celebrate")
+    item.detail.forEach(function(detail) {
+      if (!matchesWhen(detail.when, state, phase, item.frames)) return
+      detail.lines.forEach(function(line) {
+        for (var i = 0; i < line[2].length; i++) pixels[line[1]][line[0] + i] = line[2].charAt(i)
+      })
+    })
   return pixels.map(function(row) { return row.join("") })
 }

@@ -1,0 +1,684 @@
+{
+  "id": "axolotl",
+  "name": {
+    "pt": "Axolote",
+    "en": "Axolotl"
+  },
+  "frames": 2,
+  "base": [
+    "................",
+    ".A............A.",
+    "..A.OOOOOOOO.A..",
+    "AA.OBBBBBBBBO.AA",
+    "..AOBBBBBBBBOA..",
+    "AAOBBBBBBBBBBOAA",
+    "..OBBEBBBBEBBO..",
+    ".AOBBEBBBBEBBOA.",
+    "...OBBEEEEBBO...",
+    "....OOBBBBOO....",
+    "....OBBBBBBO....",
+    "..OOBBBBBBBBOO..",
+    "..OBOBBBBBBOBO..",
+    "..OOOBBBBBBOOO..",
+    "....OBBBBBBO....",
+    "....OOOOOOOO...."
+  ],
+  "eyes": [
+    [
+      5,
+      6
+    ],
+    [
+      10,
+      6
+    ]
+  ],
+  "face": "B",
+  "mouth": [
+    [
+      7,
+      8
+    ],
+    [
+      8,
+      8
+    ]
+  ],
+  "work": [
+    [
+      6,
+      12
+    ],
+    [
+      9,
+      12
+    ]
+  ],
+  "overlays": [
+    {
+      "when": {
+        "state": "idle",
+        "frame": 0
+      },
+      "rows": {}
+    },
+    {
+      "when": {
+        "state": "idle",
+        "frame": 1
+      },
+      "rows": {
+        "1": "A..............A",
+        "3": ".AAOBBBBBBBBOAA.",
+        "5": ".AOBBBBBBBBBBOA."
+      }
+    },
+    {
+      "when": {
+        "state": "working",
+        "frame": 0
+      },
+      "rows": {
+        "12": "..OBOBABBBBOBO.."
+      }
+    },
+    {
+      "when": {
+        "state": "working",
+        "frame": 1
+      },
+      "rows": {
+        "1": "A..............A",
+        "3": ".AAOBBBBBBBBOAA.",
+        "5": ".AOBBBBBBBBBBOA.",
+        "12": "..OBOBBBBABOBO.."
+      }
+    },
+    {
+      "when": {
+        "state": "attention",
+        "frame": 0
+      },
+      "rows": {
+        "0": ".......XX.......",
+        "8": "...OBBEXXEBBO..."
+      }
+    },
+    {
+      "when": {
+        "state": "attention",
+        "frame": 1
+      },
+      "rows": {
+        "1": "A..............A",
+        "3": ".AAOBBBBBBBBOAA.",
+        "5": ".AOBBBBBBBBBBOA.",
+        "8": "...OBBEXXEBBO..."
+      }
+    },
+    {
+      "when": {
+        "state": "done",
+        "frame": 0
+      },
+      "rows": {
+        "7": ".AOBBBBBBBBBBOA."
+      }
+    },
+    {
+      "when": {
+        "state": "done",
+        "frame": 1
+      },
+      "rows": {
+        "1": "A..............A",
+        "3": ".AAOBBBBBBBBOAA.",
+        "5": ".AOBBBBBBBBBBOA.",
+        "7": ".AOBBBBBBBBBBOA."
+      }
+    },
+    {
+      "when": {
+        "state": "focus",
+        "frame": 0
+      },
+      "rows": {
+        "6": "..OABBBBBBBBAO..",
+        "7": ".AOBBCBBBBCBBOA."
+      }
+    },
+    {
+      "when": {
+        "state": "focus",
+        "frame": 1
+      },
+      "rows": {
+        "1": "A..............A",
+        "3": ".AAOBBBBBBBBOAA.",
+        "5": ".AOBBBBBBBBBBOA.",
+        "6": "..OABBBBBBBBAO..",
+        "7": ".AOBBCBBBBCBBOA."
+      }
+    },
+    {
+      "when": {
+        "state": "sleep",
+        "frame": 0
+      },
+      "rows": {
+        "0": "......Z..Z......",
+        "6": "..OBBBBBBBBBBO..",
+        "7": ".AOBBBBBBBBBBOA."
+      }
+    },
+    {
+      "when": {
+        "state": "sleep",
+        "frame": 1
+      },
+      "rows": {
+        "0": "......Z..Z......",
+        "1": "A..............A",
+        "3": ".AAOBBBBBBBBOAA.",
+        "5": ".AOBBBBBBBBBBOA.",
+        "6": "..OBBBBBBBBBBO..",
+        "7": ".AOBBBBBBBBBBOA."
+      }
+    },
+    {
+      "when": {
+        "state": "limit",
+        "frame": 0
+      },
+      "rows": {
+        "6": "..OBBXBBBBXBBO..",
+        "7": ".AOBBXBBBBXBBOA."
+      }
+    },
+    {
+      "when": {
+        "state": "limit",
+        "frame": 1
+      },
+      "rows": {
+        "1": "A..............A",
+        "3": ".AAOBBBBBBBBOAA.",
+        "5": ".AOBBBBBBBBBBOA."
+      }
+    }
+  ],
+  "detail": [
+    {
+      "when": {
+        "state": "idle",
+        "frame": 0
+      },
+      "lines": [
+        [
+          10,
+          12,
+          "H"
+        ],
+        [
+          20,
+          12,
+          "H"
+        ],
+        [
+          6,
+          15,
+          "AA"
+        ],
+        [
+          24,
+          15,
+          "AA"
+        ],
+        [
+          12,
+          22,
+          "HHHHHHHH"
+        ],
+        [
+          12,
+          27,
+          "SSSSSSSS"
+        ]
+      ]
+    },
+    {
+      "when": {
+        "state": "idle",
+        "frame": 1
+      },
+      "lines": [
+        [
+          10,
+          12,
+          "H"
+        ],
+        [
+          20,
+          12,
+          "H"
+        ],
+        [
+          6,
+          15,
+          "AA"
+        ],
+        [
+          24,
+          15,
+          "AA"
+        ],
+        [
+          12,
+          22,
+          "HHHHHHHH"
+        ],
+        [
+          12,
+          27,
+          "SSSSSSSS"
+        ]
+      ]
+    },
+    {
+      "when": {
+        "state": "working",
+        "frame": 0
+      },
+      "lines": [
+        [
+          10,
+          12,
+          "H"
+        ],
+        [
+          20,
+          12,
+          "H"
+        ],
+        [
+          6,
+          15,
+          "AA"
+        ],
+        [
+          24,
+          15,
+          "AA"
+        ],
+        [
+          12,
+          22,
+          "HHHHHHHH"
+        ],
+        [
+          12,
+          27,
+          "SSSSSSSS"
+        ]
+      ]
+    },
+    {
+      "when": {
+        "state": "working",
+        "frame": 1
+      },
+      "lines": [
+        [
+          10,
+          12,
+          "H"
+        ],
+        [
+          20,
+          12,
+          "H"
+        ],
+        [
+          6,
+          15,
+          "AA"
+        ],
+        [
+          24,
+          15,
+          "AA"
+        ],
+        [
+          12,
+          22,
+          "HHHHHHHH"
+        ],
+        [
+          12,
+          27,
+          "SSSSSSSS"
+        ]
+      ]
+    },
+    {
+      "when": {
+        "state": "attention",
+        "frame": 0
+      },
+      "lines": [
+        [
+          10,
+          12,
+          "H"
+        ],
+        [
+          20,
+          12,
+          "H"
+        ],
+        [
+          6,
+          15,
+          "AA"
+        ],
+        [
+          24,
+          15,
+          "AA"
+        ],
+        [
+          12,
+          22,
+          "HHHHHHHH"
+        ],
+        [
+          12,
+          27,
+          "SSSSSSSS"
+        ]
+      ]
+    },
+    {
+      "when": {
+        "state": "attention",
+        "frame": 1
+      },
+      "lines": [
+        [
+          10,
+          12,
+          "H"
+        ],
+        [
+          20,
+          12,
+          "H"
+        ],
+        [
+          6,
+          15,
+          "AA"
+        ],
+        [
+          24,
+          15,
+          "AA"
+        ],
+        [
+          12,
+          22,
+          "HHHHHHHH"
+        ],
+        [
+          12,
+          27,
+          "SSSSSSSS"
+        ]
+      ]
+    },
+    {
+      "when": {
+        "state": "done",
+        "frame": 0
+      },
+      "lines": [
+        [
+          10,
+          12,
+          "H"
+        ],
+        [
+          20,
+          12,
+          "H"
+        ],
+        [
+          6,
+          15,
+          "AA"
+        ],
+        [
+          24,
+          15,
+          "AA"
+        ],
+        [
+          12,
+          22,
+          "HHHHHHHH"
+        ],
+        [
+          12,
+          27,
+          "SSSSSSSS"
+        ]
+      ]
+    },
+    {
+      "when": {
+        "state": "done",
+        "frame": 1
+      },
+      "lines": [
+        [
+          10,
+          12,
+          "H"
+        ],
+        [
+          20,
+          12,
+          "H"
+        ],
+        [
+          6,
+          15,
+          "AA"
+        ],
+        [
+          24,
+          15,
+          "AA"
+        ],
+        [
+          12,
+          22,
+          "HHHHHHHH"
+        ],
+        [
+          12,
+          27,
+          "SSSSSSSS"
+        ]
+      ]
+    },
+    {
+      "when": {
+        "state": "focus",
+        "frame": 0
+      },
+      "lines": [
+        [
+          6,
+          15,
+          "AA"
+        ],
+        [
+          24,
+          15,
+          "AA"
+        ],
+        [
+          12,
+          22,
+          "HHHHHHHH"
+        ],
+        [
+          12,
+          27,
+          "SSSSSSSS"
+        ]
+      ]
+    },
+    {
+      "when": {
+        "state": "focus",
+        "frame": 1
+      },
+      "lines": [
+        [
+          6,
+          15,
+          "AA"
+        ],
+        [
+          24,
+          15,
+          "AA"
+        ],
+        [
+          12,
+          22,
+          "HHHHHHHH"
+        ],
+        [
+          12,
+          27,
+          "SSSSSSSS"
+        ]
+      ]
+    },
+    {
+      "when": {
+        "state": "sleep",
+        "frame": 0
+      },
+      "lines": [
+        [
+          6,
+          15,
+          "AA"
+        ],
+        [
+          24,
+          15,
+          "AA"
+        ],
+        [
+          12,
+          22,
+          "HHHHHHHH"
+        ],
+        [
+          12,
+          27,
+          "SSSSSSSS"
+        ]
+      ]
+    },
+    {
+      "when": {
+        "state": "sleep",
+        "frame": 1
+      },
+      "lines": [
+        [
+          6,
+          15,
+          "AA"
+        ],
+        [
+          24,
+          15,
+          "AA"
+        ],
+        [
+          12,
+          22,
+          "HHHHHHHH"
+        ],
+        [
+          12,
+          27,
+          "SSSSSSSS"
+        ]
+      ]
+    },
+    {
+      "when": {
+        "state": "limit",
+        "frame": 0
+      },
+      "lines": [
+        [
+          6,
+          15,
+          "AA"
+        ],
+        [
+          24,
+          15,
+          "AA"
+        ],
+        [
+          12,
+          22,
+          "HHHHHHHH"
+        ],
+        [
+          12,
+          27,
+          "SSSSSSSS"
+        ]
+      ]
+    },
+    {
+      "when": {
+        "state": "limit",
+        "frame": 1
+      },
+      "lines": [
+        [
+          6,
+          15,
+          "AA"
+        ],
+        [
+          24,
+          15,
+          "AA"
+        ],
+        [
+          12,
+          22,
+          "HHHHHHHH"
+        ],
+        [
+          12,
+          27,
+          "SSSSSSSS"
+        ]
+      ]
+    }
+  ]
+}

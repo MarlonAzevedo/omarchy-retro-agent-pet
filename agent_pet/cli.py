@@ -2,6 +2,7 @@ import argparse
 import json
 import math
 import os
+import re
 import sys
 import time
 from datetime import datetime
@@ -10,7 +11,77 @@ from pathlib import Path
 from .installer import check, setup, write_settings_atomically
 
 
-CHARACTERS = ("computer", "cat", "robot", "dog", "axolotl")
+def valid_character(item, filename):
+    if not isinstance(item, dict) or not isinstance(item.get("id"), str):
+        return False
+    if not re.fullmatch(r"[a-z][a-z0-9_-]*", item["id"]) or item["id"] != filename:
+        return False
+    if not isinstance(item.get("name"), dict) or type(item.get("frames")) is not int or not 1 <= item["frames"] <= 4:
+        return False
+    face = item.get("face")
+    if not isinstance(face, str) or len(face) != 1 or face not in "OECBFAZX":
+        return False
+    base = item.get("base")
+    if not isinstance(base, list) or len(base) != 16 or any(
+            not isinstance(row, str) or not re.fullmatch(r"[.OECBFAZX]{16}", row) for row in base):
+        return False
+
+    def points(value):
+        return isinstance(value, list) and len(value) == 2 and all(
+            isinstance(point, list) and len(point) == 2 and all(
+                type(n) is int and 0 <= n < 16 for n in point) for point in value)
+
+    if not all(points(item.get(key)) for key in ("eyes", "mouth", "work")):
+        return False
+
+    def when(value):
+        if not isinstance(value, dict):
+            return False
+        for key, rule in value.items():
+            if key == "state" and isinstance(rule, str):
+                continue
+            if key in ("frame", "phase") and type(rule) is int and 0 <= rule < item["frames"]:
+                continue
+            if key == "awake" and type(rule) is bool:
+                continue
+            return False
+        return True
+
+    overlays = item.get("overlays")
+    if not isinstance(overlays, list) or any(
+            not isinstance(overlay, dict) or not when(overlay.get("when")) or
+            not isinstance(overlay.get("rows"), dict) or any(
+                not str(y).isdigit() or str(int(y)) != str(y) or not 0 <= int(y) < 16 or
+                not isinstance(row, str) or not re.fullmatch(r"[.OECBFAZX]{16}", row)
+                for y, row in overlay["rows"].items()) for overlay in overlays):
+        return False
+    detail = item.get("detail")
+    if not isinstance(detail, list) or any(
+            not isinstance(entry, dict) or not when(entry.get("when")) or
+            not isinstance(entry.get("lines"), list) or any(
+                not isinstance(line, list) or len(line) != 3 or type(line[0]) is not int or
+                type(line[1]) is not int or not 0 <= line[0] < 32 or not 0 <= line[1] < 32 or
+                not isinstance(line[2], str) or not re.fullmatch(r"[.OECBFAZXHSGD]+", line[2]) or
+                line[0] + len(line[2]) > 32 for line in entry["lines"]) for entry in detail):
+        return False
+    return True
+
+
+def characters():
+    builtins = Path(__file__).resolve().parents[1] / "characters"
+    user = config_path().parent / "characters"
+    result = []
+    for directory in (builtins, user):
+        for path in sorted(directory.glob("*.json")):
+            try:
+                item = json.loads(path.read_text(encoding="utf-8"))
+            except (OSError, ValueError, UnicodeError):
+                continue
+            if not valid_character(item, path.stem):
+                continue
+            if path.stem not in result:
+                result.append(path.stem)
+    return result
 
 
 def config_path():
@@ -82,7 +153,7 @@ def status_data():
     usage = [r for r in records(state_home() / "omarchy" / "agents" / "usage")
              if isinstance(r.get("id"), str) and r["id"] not in hidden]
     character = config.get("character")
-    return {"character": character if character in CHARACTERS else "computer", "sessions": sessions,
+    return {"character": character if character in characters() else "computer", "sessions": sessions,
             "focus": focus_info(read_object(state / "focus.json"), int(time.time() * 1000)), "usage": usage}
 
 
@@ -175,7 +246,7 @@ def main(argv):
     focus_parser.add_argument("values", nargs="*", metavar="AÇÃO_OU_MINUTOS",
                               help="TRABALHO PAUSA RODADAS ou status|pause|resume|stop")
     pet_parser = commands.add_parser("pet", help="consultar ou escolher o personagem")
-    pet_parser.add_argument("character", nargs="?", choices=CHARACTERS)
+    pet_parser.add_argument("character", nargs="?", choices=characters())
     args = parser.parse_args(argv)
     try:
         if args.command == "setup":
@@ -196,7 +267,9 @@ def main(argv):
                 config["character"] = args.character
                 write_object(config_path(), config)
             current = config.get("character")
-            print(f"Personagem: {current if current in CHARACTERS else 'computer'}")
+            print(f"Personagem: {current if current in characters() else 'computer'}")
+            if not args.character:
+                print("Disponíveis: " + ", ".join(characters()))
     except (OSError, ValueError) as error:
         print(f"Erro: {error}", file=sys.stderr)
         return 1

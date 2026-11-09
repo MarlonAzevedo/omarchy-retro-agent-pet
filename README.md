@@ -30,7 +30,11 @@ the home pet is larger and keeps its square proportions:
   or stop. Minutes left show next to the bar icon, the pet wears headphones while
   you focus and a notification marks each step. The timer lives in
   `~/.local/state/agent-pet/focus.json`, so it keeps running with the panel
-  closed or the shell restarted.
+  closed or the shell restarted. Move the pointer back and forth over the pet
+  to pet it. Its face and message reflect today's activity; the message changes
+  with the state or after ten minutes. Fireworks mark a completed session,
+  the end of a focus timer and each 25 completed replies. Discreet mode keeps
+  fireworks off the bar icon and hides the message.
 - **Sessões** — one card per session: project, agent, current activity
   (`Editando Hero.tsx`, `Bash · npm test`) and how long it has been running.
 - **Limites** — the main window of the selected agent in a big gauge and, when
@@ -46,9 +50,8 @@ the home pet is larger and keeps its square proportions:
   no notifications and no blinking icon. **Idioma** switches between Portuguese
   and English (automatic follows your system `LANG`). **Sessões** shows whether the session
   hooks are installed, with an **Ativar** button that installs them. **Personagem**
-  offers live previews of Computer, Cat, Robot, Dog and Axolotl; your choice is saved in
-  `~/.config/agent-pet/config.json` (`character`: `computer`, `cat`, `robot`, `dog`,
-  `axolotl`)
+  offers live previews of Computer, Cat, Robot, Dog, Axolotl and valid characters you add;
+  your choice is saved in `~/.config/agent-pet/config.json` as `character`
   and applies to the bar and panel. Missing or unknown values use Computer.
 - **ⓘ Sobre** — version, license and credits: author, e-mail and project links.
 
@@ -113,7 +116,9 @@ Then delete the hook entries that run `pet-hook.py` from
 
 ## Privacy
 
-Everything stays on your machine; nothing is sent over the network and no
+Leia [PRIVACIDADE.md](PRIVACIDADE.md) para ver os arquivos lidos e gravados e como remover os dados.
+
+The pet does not send session data over the network and no
 transcript is read. Each session is a small JSON file in
 `~/.local/state/agent-pet/sessions/` (mode `600`) with status, project folder,
 current tool and a short tool summary: a file name, a search pattern or the first
@@ -131,7 +136,27 @@ tool name and folder.
 | `discreet` | `false` | Discreet mode: no notifications, no blinking icon; managed by the **Agentes** screen. |
 | `language` | `"auto"` | Panel and notification language: `"pt"`, `"en"` or `"auto"` (from `LANG`); managed by the **Agentes** screen. |
 | `focus_rounds` | `4` | Focus rounds per timer started from the panel. |
-| `character` | `"computer"` | `"computer"`, `"cat"`, `"robot"`, `"dog"` or `"axolotl"`; shared by the panel and CLI. |
+| `character` | `"computer"` | Any valid character id from the plugin or your character folder; shared by the panel and CLI. |
+
+## Custom characters and messages
+
+Copy a built-in file from `characters/` as a starting point to
+`~/.config/agent-pet/characters/<id>.json` (or the corresponding `XDG_CONFIG_HOME` path).
+The file name and `id` must match. A character has a translated `name`, `frames` (1–4),
+16 `base` rows of 16 pixels, `eyes`, `mouth` and `work` coordinates, one `face` pixel,
+and optional `overlays` and `detail` arrays. The 16×16 pixel alphabet is
+`.OECBFAZX`; `detail` also accepts `HSGD` for the 32×32 version. An overlay
+replaces named rows when its `when` object matches `state`, `frame`, `phase` or
+`awake`. A detail entry draws `[x, y, "pixels"]` lines in the 32×32 image.
+Invalid files are ignored. Built-in characters win when ids are repeated.
+
+Messages live in `characters/<id>/recados.pt.txt` and `recados.en.txt`. Put one
+phrase per line under `[trabalhando]`, `[pedido]`, `[limite]`, `[foco]`,
+`[dormindo]`, `[animado]`, `[normal]`, `[cansado]` or `[emburrado]`.
+Blank lines and `#` comments are ignored. Your files at
+`~/.config/agent-pet/characters/<id>/recados.<pt|en>.txt` replace the matching
+language's built-in file. The balloon appears on Início and is hidden in
+discreet mode.
 
 ## Command line
 
@@ -153,8 +178,8 @@ agent-pet focus              # Show the current focus timer (also: focus status)
 agent-pet focus pause
 agent-pet focus resume
 agent-pet focus stop
-agent-pet pet                # Show the current character
-agent-pet pet axolotl        # computer, cat, robot, dog or axolotl
+agent-pet pet                # Show the current and available characters
+agent-pet pet axolotl        # Built-in or valid user character id
 agent-pet --help
 ```
 
@@ -177,7 +202,7 @@ Invalid arguments return 2; file or state errors return 1. Existing `setup` and
 python3 -B -m unittest discover -s testes -t .
 node testes/model.test.mjs
 QT_FORCE_STDERR_LOGGING=1 QT_QPA_PLATFORM=offscreen qml6 -I testes/painel/imports testes/painel/alignment.qml
-QT_FORCE_STDERR_LOGGING=1 QT_QPA_PLATFORM=offscreen qml6 testes/painel/robot-animation.qml
+QT_FORCE_STDERR_LOGGING=1 QT_QPA_PLATFORM=offscreen qml6 -I testes/painel/imports testes/painel/robot-animation.qml
 QT_QPA_PLATFORM=offscreen qml6 -I testes/painel/imports testes/painel/render.qml -- /tmp/agent-pet-render
 ```
 

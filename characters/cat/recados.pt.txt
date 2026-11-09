@@ -1,0 +1,44 @@
+[trabalhando]
+Estou de olho no trabalho, entre ronrons.
+Mais uma ideia tomando forma.
+Sigo aqui, de olho no progresso.
+
+[pedido]
+Tem um pedido miando por você.
+Preciso da sua atenção um instante.
+Uma permissão está pendente.
+
+[limite]
+Esse limite está arranhando a porta.
+Vale conferir o uso antes de seguir.
+A reserva está ficando curta.
+
+[foco]
+Vou guardar o foco como um gato guarda a janela.
+O foco está valendo.
+Vamos manter o ritmo.
+
+[dormindo]
+Hora de enrolar a cauda e dormir.
+Estou em modo descanso.
+Até já; vou fechar os olhos.
+
+[animado]
+Hoje eu ronronaria o dia inteiro!
+Gosto desse ritmo.
+O dia ganhou energia.
+
+[normal]
+Estou aqui no meu cantinho.
+Tudo tranquilo deste lado.
+Pode contar comigo.
+
+[cansado]
+Até gato precisa de uma soneca.
+Já trabalhamos bastante hoje.
+Hora de respirar um pouco.
+
+[emburrado]
+Não vou ronronar até responder esse pedido.
+Essa decisão não se resolve sozinha.
+Vou esperar você responder.

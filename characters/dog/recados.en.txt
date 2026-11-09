@@ -1,0 +1,44 @@
+[trabalhando]
+Following every step with a wagging tail.
+Another idea is taking shape.
+Still here, watching the progress.
+
+[pedido]
+A request is at the door!
+I need your attention for a moment.
+A permission request is pending.
+
+[limite]
+My nose found a nearby limit.
+Check usage before continuing.
+The reserve is running low.
+
+[foco]
+I will stand guard while you focus.
+Focus mode is on.
+Let us keep the rhythm.
+
+[dormindo]
+I will nap by your feet.
+I am taking a little break.
+See you soon; closing my eyes.
+
+[animado]
+My tail will not stop today!
+I like this rhythm.
+This day has energy.
+
+[normal]
+I am here, loyal to my post.
+All is calm on my side.
+You can count on me.
+
+[cansado]
+A break and a walk would be nice.
+We have worked plenty today.
+Let us catch our breath.
+
+[emburrado]
+Still waiting for you to open that door.
+That decision will not answer itself.
+I will wait for your reply.

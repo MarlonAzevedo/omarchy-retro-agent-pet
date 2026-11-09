@@ -50,6 +50,12 @@ Window {
         popup.availableCardHeight = small ? 400 : 0
         if (index === test.screens.length * 2) test.baselineWidth = 0
         panel.screen = screen.split("-")[0]
+        panel.characters = [
+          { id: "computer", name: { pt: "Computador", en: "Computer" } },
+          { id: "cat", name: { pt: "Gato", en: "Cat" } },
+          { id: "robot", name: { pt: "Robô", en: "Robot" } },
+          { id: "dog", name: { pt: "Cachorro", en: "Dog" } },
+          { id: "axolotl", name: { pt: "Axolote", en: "Axolotl" } } ]
         panel.config = { language: portuguese ? "pt" : "en", character: "dog" }
         panel.pomodoro = screen === "home-focus" ? { work_min: 25, break_min: 5, rounds: 4, started_at: Date.now(), paused_at: null } : {}
         // Omarchy 4.5 manda um registro por provedor conhecido, mesmo sem uso
@@ -109,7 +115,7 @@ Window {
             var labels = portuguese ? ["Computador", "Gato", "Robô", "Cachorro", "Axolote"] : ["Computer", "Cat", "Robot", "Dog", "Axolotl"]
             labels.forEach(function(text) {
               var label = test.findText(panel, text)
-              test.expect(!!label && label.implicitWidth <= label.parent.parent.width - 4, "Nome cortado: " + text)
+              test.expect(!!label && label.implicitWidth <= label.parent.parent.width - 4, "Nome cortado: " + text + (label ? " (" + label.implicitWidth + "/" + label.parent.parent.width + ")" : ""))
             })
           }
         }

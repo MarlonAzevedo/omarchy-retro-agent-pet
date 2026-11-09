@@ -1,0 +1,2324 @@
+{
+  "id": "robot",
+  "name": {
+    "pt": "Robô",
+    "en": "Robot"
+  },
+  "frames": 4,
+  "base": [
+    ".......AA.......",
+    ".......OO.......",
+    "...OOOOOOOOOO...",
+    "...OBBBBBBBBO...",
+    ".OOOFFFFFFFFOOO.",
+    ".OBOFFFFFFFFOBO.",
+    ".OBOFEFFFFEFOBO.",
+    ".OOOFEFFFFEFOOO.",
+    "...OFFFFFFFFO...",
+    "...OOOOOOOOOO...",
+    "......OOOO......",
+    "...OOOBBBAOOO...",
+    "...BOOBAABOOB...",
+    "...OOOBBBBOOO...",
+    ".....OO..OO.....",
+    "....OOO..OOO...."
+  ],
+  "eyes": [
+    [
+      5,
+      6
+    ],
+    [
+      10,
+      6
+    ]
+  ],
+  "face": "F",
+  "mouth": [
+    [
+      7,
+      8
+    ],
+    [
+      8,
+      8
+    ]
+  ],
+  "work": [
+    [
+      6,
+      12
+    ],
+    [
+      9,
+      12
+    ]
+  ],
+  "overlays": [
+    {
+      "when": {
+        "state": "idle",
+        "frame": 0
+      },
+      "rows": {}
+    },
+    {
+      "when": {
+        "state": "idle",
+        "frame": 1
+      },
+      "rows": {
+        "0": ".......FF.......",
+        "10": "..OO..OOOO......",
+        "11": "..BO.OBBBAOOO...",
+        "12": "..OOOOBAABOOB...",
+        "13": ".....OBBBBOOO..."
+      }
+    },
+    {
+      "when": {
+        "state": "idle",
+        "frame": 2
+      },
+      "rows": {
+        "10": "..OO..OOOO..OO..",
+        "11": "..BO.OBBBAO.OB..",
+        "12": "..OOOOBAABOOOO..",
+        "13": ".....OBBBBO....."
+      }
+    },
+    {
+      "when": {
+        "state": "idle",
+        "frame": 3
+      },
+      "rows": {
+        "0": ".......FF.......",
+        "6": ".OBOFFFFFFFFOBO.",
+        "10": "......OOOO..OO..",
+        "11": "...OOOBBBAO.OB..",
+        "12": "...BOOBAABOOOO..",
+        "13": "...OOOBBBBO....."
+      }
+    },
+    {
+      "when": {
+        "state": "working",
+        "frame": 0
+      },
+      "rows": {
+        "10": "..OO..OOOO......",
+        "11": "..BO.OBBBAOOO...",
+        "12": "..OOOOAAAFOOB...",
+        "13": ".....OBBBBOOO..."
+      }
+    },
+    {
+      "when": {
+        "state": "working",
+        "frame": 1
+      },
+      "rows": {
+        "10": "......OOOO..OO..",
+        "11": "...OOOBBBAO.OB..",
+        "12": "...BOOFAAAOOOO..",
+        "13": "...OOOBBBBO....."
+      }
+    },
+    {
+      "when": {
+        "state": "working",
+        "frame": 2
+      },
+      "rows": {
+        "10": "..OO..OOOO......",
+        "11": "..BO.OBBBAOOO...",
+        "12": "..OOOOFAAAOOB...",
+        "13": ".....OBBBBOOO..."
+      }
+    },
+    {
+      "when": {
+        "state": "working",
+        "frame": 3
+      },
+      "rows": {
+        "10": "......OOOO..OO..",
+        "11": "...OOOBBBAO.OB..",
+        "12": "...BOOFAAAOOOO..",
+        "13": "...OOOBBBBO....."
+      }
+    },
+    {
+      "when": {
+        "state": "attention",
+        "frame": 0
+      },
+      "rows": {
+        "0": ".......XX.......",
+        "8": "...OFFFXXFFFO...",
+        "10": "..OO..OOOO......",
+        "11": "..BO.OBBBAOOO...",
+        "12": "..OOOOBAABOOB...",
+        "13": ".....OBBBBOOO..."
+      }
+    },
+    {
+      "when": {
+        "state": "attention",
+        "frame": 1
+      },
+      "rows": {
+        "8": "...OFFFXXFFFO...",
+        "10": "......OOOO..OO..",
+        "11": "...OOOBBBAO.OB..",
+        "12": "...BOOBAABOOOO..",
+        "13": "...OOOBBBBO....."
+      }
+    },
+    {
+      "when": {
+        "state": "attention",
+        "frame": 2
+      },
+      "rows": {
+        "8": "...OFFFXXFFFO...",
+        "10": "..OO..OOOO......",
+        "11": "..BO.OBBBAOOO...",
+        "12": "..OOOOBAABOOB...",
+        "13": ".....OBBBBOOO..."
+      }
+    },
+    {
+      "when": {
+        "state": "attention",
+        "frame": 3
+      },
+      "rows": {
+        "8": "...OFFFXXFFFO...",
+        "10": "......OOOO..OO..",
+        "11": "...OOOBBBAO.OB..",
+        "12": "...BOOBAABOOOO..",
+        "13": "...OOOBBBBO....."
+      }
+    },
+    {
+      "when": {
+        "state": "done",
+        "frame": 0
+      },
+      "rows": {
+        "7": ".OOOFFFFFFFFOOO.",
+        "10": "..OO..OOOO......",
+        "11": "..BO.OBBBAOOO...",
+        "12": "..OOOOBAABOOB...",
+        "13": ".....OBBBBOOO..."
+      }
+    },
+    {
+      "when": {
+        "state": "done",
+        "frame": 1
+      },
+      "rows": {
+        "7": ".OOOFFFFFFFFOOO.",
+        "10": "......OOOO..OO..",
+        "11": "...OOOBBBAO.OB..",
+        "12": "...BOOBAABOOOO..",
+        "13": "...OOOBBBBO....."
+      }
+    },
+    {
+      "when": {
+        "state": "done",
+        "frame": 2
+      },
+      "rows": {
+        "7": ".OOOFFFFFFFFOOO.",
+        "10": "..OO..OOOO......",
+        "11": "..BO.OBBBAOOO...",
+        "12": "..OOOOBAABOOB...",
+        "13": ".....OBBBBOOO..."
+      }
+    },
+    {
+      "when": {
+        "state": "done",
+        "frame": 3
+      },
+      "rows": {
+        "7": ".OOOFFFFFFFFOOO.",
+        "10": "......OOOO..OO..",
+        "11": "...OOOBBBAO.OB..",
+        "12": "...BOOBAABOOOO..",
+        "13": "...OOOBBBBO....."
+      }
+    },
+    {
+      "when": {
+        "state": "focus",
+        "frame": 0
+      },
+      "rows": {
+        "6": ".OBAFFFFFFFFABO.",
+        "7": ".OOOFCFFFFCFOOO.",
+        "10": "..OO..OOOO......",
+        "11": "..BO.OBBBAOOO...",
+        "12": "..OOOOBAABOOB...",
+        "13": ".....OBBBBOOO..."
+      }
+    },
+    {
+      "when": {
+        "state": "focus",
+        "frame": 1
+      },
+      "rows": {
+        "6": ".OBAFFFFFFFFABO.",
+        "7": ".OOOFCFFFFCFOOO.",
+        "10": "......OOOO..OO..",
+        "11": "...OOOBBBAO.OB..",
+        "12": "...BOOBAABOOOO..",
+        "13": "...OOOBBBBO....."
+      }
+    },
+    {
+      "when": {
+        "state": "focus",
+        "frame": 2
+      },
+      "rows": {
+        "6": ".OBAFFFFFFFFABO.",
+        "7": ".OOOFCFFFFCFOOO.",
+        "10": "..OO..OOOO......",
+        "11": "..BO.OBBBAOOO...",
+        "12": "..OOOOBAABOOB...",
+        "13": ".....OBBBBOOO..."
+      }
+    },
+    {
+      "when": {
+        "state": "focus",
+        "frame": 3
+      },
+      "rows": {
+        "6": ".OBAFFFFFFFFABO.",
+        "7": ".OOOFCFFFFCFOOO.",
+        "10": "......OOOO..OO..",
+        "11": "...OOOBBBAO.OB..",
+        "12": "...BOOBAABOOOO..",
+        "13": "...OOOBBBBO....."
+      }
+    },
+    {
+      "when": {
+        "state": "sleep",
+        "frame": 0
+      },
+      "rows": {
+        "0": "......Z..Z......",
+        "6": ".OBOFFFFFFFFOBO.",
+        "7": ".OOOFFFFFFFFOOO."
+      }
+    },
+    {
+      "when": {
+        "state": "sleep",
+        "frame": 1
+      },
+      "rows": {
+        "0": "......Z..Z......",
+        "6": ".OBOFFFFFFFFOBO.",
+        "7": ".OOOFFFFFFFFOOO."
+      }
+    },
+    {
+      "when": {
+        "state": "sleep",
+        "frame": 2
+      },
+      "rows": {
+        "0": "......Z..Z......",
+        "6": ".OBOFFFFFFFFOBO.",
+        "7": ".OOOFFFFFFFFOOO."
+      }
+    },
+    {
+      "when": {
+        "state": "sleep",
+        "frame": 3
+      },
+      "rows": {
+        "0": "......Z..Z......",
+        "6": ".OBOFFFFFFFFOBO.",
+        "7": ".OOOFFFFFFFFOOO."
+      }
+    },
+    {
+      "when": {
+        "state": "limit",
+        "frame": 0
+      },
+      "rows": {
+        "6": ".OBOFXFFFFXFOBO.",
+        "7": ".OOOFXFFFFXFOOO.",
+        "10": "..OO..OOOO......",
+        "11": "..BO.OBBBAOOO...",
+        "12": "..OOOOBAABOOB...",
+        "13": ".....OBBBBOOO..."
+      }
+    },
+    {
+      "when": {
+        "state": "limit",
+        "frame": 1
+      },
+      "rows": {
+        "10": "......OOOO..OO..",
+        "11": "...OOOBBBAO.OB..",
+        "12": "...BOOBAABOOOO..",
+        "13": "...OOOBBBBO....."
+      }
+    },
+    {
+      "when": {
+        "state": "limit",
+        "frame": 2
+      },
+      "rows": {
+        "10": "..OO..OOOO......",
+        "11": "..BO.OBBBAOOO...",
+        "12": "..OOOOBAABOOB...",
+        "13": ".....OBBBBOOO..."
+      }
+    },
+    {
+      "when": {
+        "state": "limit",
+        "frame": 3
+      },
+      "rows": {
+        "10": "......OOOO..OO..",
+        "11": "...OOOBBBAO.OB..",
+        "12": "...BOOBAABOOOO..",
+        "13": "...OOOBBBBO....."
+      }
+    }
+  ],
+  "detail": [
+    {
+      "when": {
+        "state": "idle",
+        "frame": 0
+      },
+      "lines": [
+        [
+          15,
+          0,
+          "HH"
+        ],
+        [
+          9,
+          8,
+          "GGGGGGGGGGGGGG"
+        ],
+        [
+          6,
+          10,
+          "HS"
+        ],
+        [
+          24,
+          10,
+          "SH"
+        ],
+        [
+          10,
+          12,
+          "G"
+        ],
+        [
+          20,
+          12,
+          "G"
+        ],
+        [
+          9,
+          17,
+          "DDDDDDDDDDDDDD"
+        ],
+        [
+          13,
+          23,
+          "EAAE"
+        ],
+        [
+          13,
+          24,
+          "E"
+        ],
+        [
+          16,
+          24,
+          "E"
+        ],
+        [
+          13,
+          26,
+          "SSSSSS"
+        ],
+        [
+          8,
+          30,
+          "HHHHHH"
+        ],
+        [
+          18,
+          30,
+          "HHHHHH"
+        ]
+      ]
+    },
+    {
+      "when": {
+        "state": "idle",
+        "frame": 1
+      },
+      "lines": [
+        [
+          14,
+          0,
+          "AGGA"
+        ],
+        [
+          9,
+          8,
+          "GGGGGGGGGGGGGG"
+        ],
+        [
+          6,
+          10,
+          "HS"
+        ],
+        [
+          24,
+          10,
+          "SH"
+        ],
+        [
+          10,
+          12,
+          "G"
+        ],
+        [
+          20,
+          12,
+          "G"
+        ],
+        [
+          9,
+          17,
+          "DDDDDDDDDDDDDD"
+        ],
+        [
+          13,
+          23,
+          "EAAE"
+        ],
+        [
+          13,
+          24,
+          "E"
+        ],
+        [
+          16,
+          24,
+          "E"
+        ],
+        [
+          13,
+          26,
+          "SSSSSS"
+        ],
+        [
+          8,
+          30,
+          "HHHHHH"
+        ],
+        [
+          18,
+          30,
+          "HHHHHH"
+        ]
+      ]
+    },
+    {
+      "when": {
+        "state": "idle",
+        "frame": 2
+      },
+      "lines": [
+        [
+          15,
+          0,
+          "HH"
+        ],
+        [
+          9,
+          8,
+          "GGGGGGGGGGGGGG"
+        ],
+        [
+          6,
+          10,
+          "HS"
+        ],
+        [
+          24,
+          10,
+          "SH"
+        ],
+        [
+          10,
+          12,
+          "G"
+        ],
+        [
+          20,
+          12,
+          "G"
+        ],
+        [
+          9,
+          17,
+          "DDDDDDDDDDDDDD"
+        ],
+        [
+          13,
+          23,
+          "EAAE"
+        ],
+        [
+          13,
+          24,
+          "E"
+        ],
+        [
+          16,
+          24,
+          "E"
+        ],
+        [
+          13,
+          26,
+          "SSSSSS"
+        ],
+        [
+          8,
+          30,
+          "HHHHHH"
+        ],
+        [
+          18,
+          30,
+          "HHHHHH"
+        ]
+      ]
+    },
+    {
+      "when": {
+        "state": "idle",
+        "frame": 3
+      },
+      "lines": [
+        [
+          14,
+          0,
+          "AGGA"
+        ],
+        [
+          9,
+          8,
+          "GGGGGGGGGGGGGG"
+        ],
+        [
+          6,
+          10,
+          "HS"
+        ],
+        [
+          24,
+          10,
+          "SH"
+        ],
+        [
+          9,
+          17,
+          "DDDDDDDDDDDDDD"
+        ],
+        [
+          13,
+          23,
+          "EAAE"
+        ],
+        [
+          13,
+          24,
+          "E"
+        ],
+        [
+          16,
+          24,
+          "E"
+        ],
+        [
+          13,
+          26,
+          "SSSSSS"
+        ],
+        [
+          8,
+          30,
+          "HHHHHH"
+        ],
+        [
+          18,
+          30,
+          "HHHHHH"
+        ]
+      ]
+    },
+    {
+      "when": {
+        "state": "working",
+        "frame": 0
+      },
+      "lines": [
+        [
+          15,
+          0,
+          "HH"
+        ],
+        [
+          9,
+          8,
+          "GGGGGGGGGGGGGG"
+        ],
+        [
+          6,
+          10,
+          "HS"
+        ],
+        [
+          24,
+          10,
+          "SH"
+        ],
+        [
+          10,
+          12,
+          "G"
+        ],
+        [
+          20,
+          12,
+          "G"
+        ],
+        [
+          9,
+          17,
+          "DDDDDDDDDDDDDD"
+        ],
+        [
+          13,
+          23,
+          "EAAE"
+        ],
+        [
+          13,
+          24,
+          "E"
+        ],
+        [
+          16,
+          24,
+          "E"
+        ],
+        [
+          13,
+          26,
+          "SSSSSS"
+        ],
+        [
+          8,
+          30,
+          "HHHHHH"
+        ],
+        [
+          18,
+          30,
+          "HHHHHH"
+        ]
+      ]
+    },
+    {
+      "when": {
+        "state": "working",
+        "frame": 1
+      },
+      "lines": [
+        [
+          15,
+          0,
+          "GG"
+        ],
+        [
+          9,
+          8,
+          "GGGGGGGGGGGGGG"
+        ],
+        [
+          6,
+          10,
+          "HS"
+        ],
+        [
+          24,
+          10,
+          "SH"
+        ],
+        [
+          10,
+          12,
+          "G"
+        ],
+        [
+          20,
+          12,
+          "G"
+        ],
+        [
+          9,
+          17,
+          "DDDDDDDDDDDDDD"
+        ],
+        [
+          13,
+          23,
+          "EAAE"
+        ],
+        [
+          13,
+          24,
+          "E"
+        ],
+        [
+          16,
+          24,
+          "E"
+        ],
+        [
+          13,
+          26,
+          "SSSSSS"
+        ],
+        [
+          8,
+          30,
+          "HHHHHH"
+        ],
+        [
+          18,
+          30,
+          "HHHHHH"
+        ]
+      ]
+    },
+    {
+      "when": {
+        "state": "working",
+        "frame": 2
+      },
+      "lines": [
+        [
+          15,
+          0,
+          "HH"
+        ],
+        [
+          9,
+          8,
+          "GGGGGGGGGGGGGG"
+        ],
+        [
+          6,
+          10,
+          "HS"
+        ],
+        [
+          24,
+          10,
+          "SH"
+        ],
+        [
+          10,
+          12,
+          "G"
+        ],
+        [
+          20,
+          12,
+          "G"
+        ],
+        [
+          9,
+          17,
+          "DDDDDDDDDDDDDD"
+        ],
+        [
+          13,
+          23,
+          "EAAE"
+        ],
+        [
+          13,
+          24,
+          "E"
+        ],
+        [
+          16,
+          24,
+          "E"
+        ],
+        [
+          13,
+          26,
+          "SSSSSS"
+        ],
+        [
+          8,
+          30,
+          "HHHHHH"
+        ],
+        [
+          18,
+          30,
+          "HHHHHH"
+        ]
+      ]
+    },
+    {
+      "when": {
+        "state": "working",
+        "frame": 3
+      },
+      "lines": [
+        [
+          15,
+          0,
+          "GG"
+        ],
+        [
+          9,
+          8,
+          "GGGGGGGGGGGGGG"
+        ],
+        [
+          6,
+          10,
+          "HS"
+        ],
+        [
+          24,
+          10,
+          "SH"
+        ],
+        [
+          10,
+          12,
+          "G"
+        ],
+        [
+          20,
+          12,
+          "G"
+        ],
+        [
+          9,
+          17,
+          "DDDDDDDDDDDDDD"
+        ],
+        [
+          13,
+          23,
+          "EAAE"
+        ],
+        [
+          13,
+          24,
+          "E"
+        ],
+        [
+          16,
+          24,
+          "E"
+        ],
+        [
+          13,
+          26,
+          "SSSSSS"
+        ],
+        [
+          8,
+          30,
+          "HHHHHH"
+        ],
+        [
+          18,
+          30,
+          "HHHHHH"
+        ]
+      ]
+    },
+    {
+      "when": {
+        "state": "attention",
+        "frame": 0
+      },
+      "lines": [
+        [
+          14,
+          0,
+          "AHHA"
+        ],
+        [
+          9,
+          8,
+          "GGGGGGGGGGGGGG"
+        ],
+        [
+          6,
+          10,
+          "HS"
+        ],
+        [
+          24,
+          10,
+          "SH"
+        ],
+        [
+          10,
+          12,
+          "G"
+        ],
+        [
+          20,
+          12,
+          "G"
+        ],
+        [
+          9,
+          17,
+          "DDDDDDDDDDDDDD"
+        ],
+        [
+          13,
+          23,
+          "EAAE"
+        ],
+        [
+          13,
+          24,
+          "E"
+        ],
+        [
+          16,
+          24,
+          "E"
+        ],
+        [
+          13,
+          26,
+          "SSSSSS"
+        ],
+        [
+          8,
+          30,
+          "HHHHHH"
+        ],
+        [
+          18,
+          30,
+          "HHHHHH"
+        ]
+      ]
+    },
+    {
+      "when": {
+        "state": "attention",
+        "frame": 1
+      },
+      "lines": [
+        [
+          15,
+          0,
+          "GG"
+        ],
+        [
+          9,
+          8,
+          "GGGGGGGGGGGGGG"
+        ],
+        [
+          6,
+          10,
+          "HS"
+        ],
+        [
+          24,
+          10,
+          "SH"
+        ],
+        [
+          10,
+          12,
+          "G"
+        ],
+        [
+          20,
+          12,
+          "G"
+        ],
+        [
+          9,
+          17,
+          "DDDDDDDDDDDDDD"
+        ],
+        [
+          13,
+          23,
+          "EAAE"
+        ],
+        [
+          13,
+          24,
+          "E"
+        ],
+        [
+          16,
+          24,
+          "E"
+        ],
+        [
+          13,
+          26,
+          "SSSSSS"
+        ],
+        [
+          8,
+          30,
+          "HHHHHH"
+        ],
+        [
+          18,
+          30,
+          "HHHHHH"
+        ]
+      ]
+    },
+    {
+      "when": {
+        "state": "attention",
+        "frame": 2
+      },
+      "lines": [
+        [
+          15,
+          0,
+          "HH"
+        ],
+        [
+          9,
+          8,
+          "GGGGGGGGGGGGGG"
+        ],
+        [
+          6,
+          10,
+          "HS"
+        ],
+        [
+          24,
+          10,
+          "SH"
+        ],
+        [
+          10,
+          12,
+          "G"
+        ],
+        [
+          20,
+          12,
+          "G"
+        ],
+        [
+          9,
+          17,
+          "DDDDDDDDDDDDDD"
+        ],
+        [
+          13,
+          23,
+          "EAAE"
+        ],
+        [
+          13,
+          24,
+          "E"
+        ],
+        [
+          16,
+          24,
+          "E"
+        ],
+        [
+          13,
+          26,
+          "SSSSSS"
+        ],
+        [
+          8,
+          30,
+          "HHHHHH"
+        ],
+        [
+          18,
+          30,
+          "HHHHHH"
+        ]
+      ]
+    },
+    {
+      "when": {
+        "state": "attention",
+        "frame": 3
+      },
+      "lines": [
+        [
+          15,
+          0,
+          "GG"
+        ],
+        [
+          9,
+          8,
+          "GGGGGGGGGGGGGG"
+        ],
+        [
+          6,
+          10,
+          "HS"
+        ],
+        [
+          24,
+          10,
+          "SH"
+        ],
+        [
+          10,
+          12,
+          "G"
+        ],
+        [
+          20,
+          12,
+          "G"
+        ],
+        [
+          9,
+          17,
+          "DDDDDDDDDDDDDD"
+        ],
+        [
+          13,
+          23,
+          "EAAE"
+        ],
+        [
+          13,
+          24,
+          "E"
+        ],
+        [
+          16,
+          24,
+          "E"
+        ],
+        [
+          13,
+          26,
+          "SSSSSS"
+        ],
+        [
+          8,
+          30,
+          "HHHHHH"
+        ],
+        [
+          18,
+          30,
+          "HHHHHH"
+        ]
+      ]
+    },
+    {
+      "when": {
+        "state": "done",
+        "frame": 0
+      },
+      "lines": [
+        [
+          15,
+          0,
+          "HH"
+        ],
+        [
+          9,
+          8,
+          "GGGGGGGGGGGGGG"
+        ],
+        [
+          6,
+          10,
+          "HS"
+        ],
+        [
+          24,
+          10,
+          "SH"
+        ],
+        [
+          10,
+          12,
+          "G"
+        ],
+        [
+          20,
+          12,
+          "G"
+        ],
+        [
+          9,
+          17,
+          "DDDDDDDDDDDDDD"
+        ],
+        [
+          13,
+          23,
+          "EAAE"
+        ],
+        [
+          13,
+          24,
+          "E"
+        ],
+        [
+          16,
+          24,
+          "E"
+        ],
+        [
+          13,
+          26,
+          "SSSSSS"
+        ],
+        [
+          8,
+          30,
+          "HHHHHH"
+        ],
+        [
+          18,
+          30,
+          "HHHHHH"
+        ]
+      ]
+    },
+    {
+      "when": {
+        "state": "done",
+        "frame": 1
+      },
+      "lines": [
+        [
+          15,
+          0,
+          "GG"
+        ],
+        [
+          9,
+          8,
+          "GGGGGGGGGGGGGG"
+        ],
+        [
+          6,
+          10,
+          "HS"
+        ],
+        [
+          24,
+          10,
+          "SH"
+        ],
+        [
+          10,
+          12,
+          "G"
+        ],
+        [
+          20,
+          12,
+          "G"
+        ],
+        [
+          9,
+          17,
+          "DDDDDDDDDDDDDD"
+        ],
+        [
+          13,
+          23,
+          "EAAE"
+        ],
+        [
+          13,
+          24,
+          "E"
+        ],
+        [
+          16,
+          24,
+          "E"
+        ],
+        [
+          13,
+          26,
+          "SSSSSS"
+        ],
+        [
+          8,
+          30,
+          "HHHHHH"
+        ],
+        [
+          18,
+          30,
+          "HHHHHH"
+        ]
+      ]
+    },
+    {
+      "when": {
+        "state": "done",
+        "frame": 2
+      },
+      "lines": [
+        [
+          15,
+          0,
+          "HH"
+        ],
+        [
+          9,
+          8,
+          "GGGGGGGGGGGGGG"
+        ],
+        [
+          6,
+          10,
+          "HS"
+        ],
+        [
+          24,
+          10,
+          "SH"
+        ],
+        [
+          10,
+          12,
+          "G"
+        ],
+        [
+          20,
+          12,
+          "G"
+        ],
+        [
+          9,
+          17,
+          "DDDDDDDDDDDDDD"
+        ],
+        [
+          13,
+          23,
+          "EAAE"
+        ],
+        [
+          13,
+          24,
+          "E"
+        ],
+        [
+          16,
+          24,
+          "E"
+        ],
+        [
+          13,
+          26,
+          "SSSSSS"
+        ],
+        [
+          8,
+          30,
+          "HHHHHH"
+        ],
+        [
+          18,
+          30,
+          "HHHHHH"
+        ]
+      ]
+    },
+    {
+      "when": {
+        "state": "done",
+        "frame": 3
+      },
+      "lines": [
+        [
+          15,
+          0,
+          "GG"
+        ],
+        [
+          9,
+          8,
+          "GGGGGGGGGGGGGG"
+        ],
+        [
+          6,
+          10,
+          "HS"
+        ],
+        [
+          24,
+          10,
+          "SH"
+        ],
+        [
+          10,
+          12,
+          "G"
+        ],
+        [
+          20,
+          12,
+          "G"
+        ],
+        [
+          9,
+          17,
+          "DDDDDDDDDDDDDD"
+        ],
+        [
+          13,
+          23,
+          "EAAE"
+        ],
+        [
+          13,
+          24,
+          "E"
+        ],
+        [
+          16,
+          24,
+          "E"
+        ],
+        [
+          13,
+          26,
+          "SSSSSS"
+        ],
+        [
+          8,
+          30,
+          "HHHHHH"
+        ],
+        [
+          18,
+          30,
+          "HHHHHH"
+        ]
+      ]
+    },
+    {
+      "when": {
+        "state": "focus",
+        "frame": 0
+      },
+      "lines": [
+        [
+          15,
+          0,
+          "HH"
+        ],
+        [
+          9,
+          8,
+          "GGGGGGGGGGGGGG"
+        ],
+        [
+          6,
+          10,
+          "HS"
+        ],
+        [
+          24,
+          10,
+          "SH"
+        ],
+        [
+          9,
+          17,
+          "DDDDDDDDDDDDDD"
+        ],
+        [
+          13,
+          23,
+          "EAAE"
+        ],
+        [
+          13,
+          24,
+          "E"
+        ],
+        [
+          16,
+          24,
+          "E"
+        ],
+        [
+          13,
+          26,
+          "SSSSSS"
+        ],
+        [
+          8,
+          30,
+          "HHHHHH"
+        ],
+        [
+          18,
+          30,
+          "HHHHHH"
+        ]
+      ]
+    },
+    {
+      "when": {
+        "state": "focus",
+        "frame": 1
+      },
+      "lines": [
+        [
+          15,
+          0,
+          "GG"
+        ],
+        [
+          9,
+          8,
+          "GGGGGGGGGGGGGG"
+        ],
+        [
+          6,
+          10,
+          "HS"
+        ],
+        [
+          24,
+          10,
+          "SH"
+        ],
+        [
+          9,
+          17,
+          "DDDDDDDDDDDDDD"
+        ],
+        [
+          13,
+          23,
+          "EAAE"
+        ],
+        [
+          13,
+          24,
+          "E"
+        ],
+        [
+          16,
+          24,
+          "E"
+        ],
+        [
+          13,
+          26,
+          "SSSSSS"
+        ],
+        [
+          8,
+          30,
+          "HHHHHH"
+        ],
+        [
+          18,
+          30,
+          "HHHHHH"
+        ]
+      ]
+    },
+    {
+      "when": {
+        "state": "focus",
+        "frame": 2
+      },
+      "lines": [
+        [
+          15,
+          0,
+          "HH"
+        ],
+        [
+          9,
+          8,
+          "GGGGGGGGGGGGGG"
+        ],
+        [
+          6,
+          10,
+          "HS"
+        ],
+        [
+          24,
+          10,
+          "SH"
+        ],
+        [
+          9,
+          17,
+          "DDDDDDDDDDDDDD"
+        ],
+        [
+          13,
+          23,
+          "EAAE"
+        ],
+        [
+          13,
+          24,
+          "E"
+        ],
+        [
+          16,
+          24,
+          "E"
+        ],
+        [
+          13,
+          26,
+          "SSSSSS"
+        ],
+        [
+          8,
+          30,
+          "HHHHHH"
+        ],
+        [
+          18,
+          30,
+          "HHHHHH"
+        ]
+      ]
+    },
+    {
+      "when": {
+        "state": "focus",
+        "frame": 3
+      },
+      "lines": [
+        [
+          15,
+          0,
+          "GG"
+        ],
+        [
+          9,
+          8,
+          "GGGGGGGGGGGGGG"
+        ],
+        [
+          6,
+          10,
+          "HS"
+        ],
+        [
+          24,
+          10,
+          "SH"
+        ],
+        [
+          9,
+          17,
+          "DDDDDDDDDDDDDD"
+        ],
+        [
+          13,
+          23,
+          "EAAE"
+        ],
+        [
+          13,
+          24,
+          "E"
+        ],
+        [
+          16,
+          24,
+          "E"
+        ],
+        [
+          13,
+          26,
+          "SSSSSS"
+        ],
+        [
+          8,
+          30,
+          "HHHHHH"
+        ],
+        [
+          18,
+          30,
+          "HHHHHH"
+        ]
+      ]
+    },
+    {
+      "when": {
+        "state": "sleep",
+        "frame": 0
+      },
+      "lines": [
+        [
+          14,
+          0,
+          "AHHA"
+        ],
+        [
+          9,
+          8,
+          "GGGGGGGGGGGGGG"
+        ],
+        [
+          6,
+          10,
+          "HS"
+        ],
+        [
+          24,
+          10,
+          "SH"
+        ],
+        [
+          9,
+          17,
+          "DDDDDDDDDDDDDD"
+        ],
+        [
+          13,
+          23,
+          "EAAE"
+        ],
+        [
+          13,
+          24,
+          "E"
+        ],
+        [
+          16,
+          24,
+          "E"
+        ],
+        [
+          13,
+          26,
+          "SSSSSS"
+        ],
+        [
+          8,
+          30,
+          "HHHHHH"
+        ],
+        [
+          18,
+          30,
+          "HHHHHH"
+        ]
+      ]
+    },
+    {
+      "when": {
+        "state": "sleep",
+        "frame": 1
+      },
+      "lines": [
+        [
+          14,
+          0,
+          "AGGA"
+        ],
+        [
+          9,
+          8,
+          "GGGGGGGGGGGGGG"
+        ],
+        [
+          6,
+          10,
+          "HS"
+        ],
+        [
+          24,
+          10,
+          "SH"
+        ],
+        [
+          9,
+          17,
+          "DDDDDDDDDDDDDD"
+        ],
+        [
+          13,
+          23,
+          "EAAE"
+        ],
+        [
+          13,
+          24,
+          "E"
+        ],
+        [
+          16,
+          24,
+          "E"
+        ],
+        [
+          13,
+          26,
+          "SSSSSS"
+        ],
+        [
+          8,
+          30,
+          "HHHHHH"
+        ],
+        [
+          18,
+          30,
+          "HHHHHH"
+        ]
+      ]
+    },
+    {
+      "when": {
+        "state": "sleep",
+        "frame": 2
+      },
+      "lines": [
+        [
+          14,
+          0,
+          "AHHA"
+        ],
+        [
+          9,
+          8,
+          "GGGGGGGGGGGGGG"
+        ],
+        [
+          6,
+          10,
+          "HS"
+        ],
+        [
+          24,
+          10,
+          "SH"
+        ],
+        [
+          9,
+          17,
+          "DDDDDDDDDDDDDD"
+        ],
+        [
+          13,
+          23,
+          "EAAE"
+        ],
+        [
+          13,
+          24,
+          "E"
+        ],
+        [
+          16,
+          24,
+          "E"
+        ],
+        [
+          13,
+          26,
+          "SSSSSS"
+        ],
+        [
+          8,
+          30,
+          "HHHHHH"
+        ],
+        [
+          18,
+          30,
+          "HHHHHH"
+        ]
+      ]
+    },
+    {
+      "when": {
+        "state": "sleep",
+        "frame": 3
+      },
+      "lines": [
+        [
+          14,
+          0,
+          "AGGA"
+        ],
+        [
+          9,
+          8,
+          "GGGGGGGGGGGGGG"
+        ],
+        [
+          6,
+          10,
+          "HS"
+        ],
+        [
+          24,
+          10,
+          "SH"
+        ],
+        [
+          9,
+          17,
+          "DDDDDDDDDDDDDD"
+        ],
+        [
+          13,
+          23,
+          "EAAE"
+        ],
+        [
+          13,
+          24,
+          "E"
+        ],
+        [
+          16,
+          24,
+          "E"
+        ],
+        [
+          13,
+          26,
+          "SSSSSS"
+        ],
+        [
+          8,
+          30,
+          "HHHHHH"
+        ],
+        [
+          18,
+          30,
+          "HHHHHH"
+        ]
+      ]
+    },
+    {
+      "when": {
+        "state": "limit",
+        "frame": 0
+      },
+      "lines": [
+        [
+          15,
+          0,
+          "HH"
+        ],
+        [
+          9,
+          8,
+          "GGGGGGGGGGGGGG"
+        ],
+        [
+          6,
+          10,
+          "HS"
+        ],
+        [
+          24,
+          10,
+          "SH"
+        ],
+        [
+          9,
+          17,
+          "DDDDDDDDDDDDDD"
+        ],
+        [
+          13,
+          23,
+          "EAAE"
+        ],
+        [
+          13,
+          24,
+          "E"
+        ],
+        [
+          16,
+          24,
+          "E"
+        ],
+        [
+          13,
+          26,
+          "SSSSSS"
+        ],
+        [
+          8,
+          30,
+          "HHHHHH"
+        ],
+        [
+          18,
+          30,
+          "HHHHHH"
+        ]
+      ]
+    },
+    {
+      "when": {
+        "state": "limit",
+        "frame": 1
+      },
+      "lines": [
+        [
+          15,
+          0,
+          "GG"
+        ],
+        [
+          9,
+          8,
+          "GGGGGGGGGGGGGG"
+        ],
+        [
+          6,
+          10,
+          "HS"
+        ],
+        [
+          24,
+          10,
+          "SH"
+        ],
+        [
+          9,
+          17,
+          "DDDDDDDDDDDDDD"
+        ],
+        [
+          13,
+          23,
+          "EAAE"
+        ],
+        [
+          13,
+          24,
+          "E"
+        ],
+        [
+          16,
+          24,
+          "E"
+        ],
+        [
+          13,
+          26,
+          "SSSSSS"
+        ],
+        [
+          8,
+          30,
+          "HHHHHH"
+        ],
+        [
+          18,
+          30,
+          "HHHHHH"
+        ]
+      ]
+    },
+    {
+      "when": {
+        "state": "limit",
+        "frame": 2
+      },
+      "lines": [
+        [
+          15,
+          0,
+          "HH"
+        ],
+        [
+          9,
+          8,
+          "GGGGGGGGGGGGGG"
+        ],
+        [
+          6,
+          10,
+          "HS"
+        ],
+        [
+          24,
+          10,
+          "SH"
+        ],
+        [
+          9,
+          17,
+          "DDDDDDDDDDDDDD"
+        ],
+        [
+          13,
+          23,
+          "EAAE"
+        ],
+        [
+          13,
+          24,
+          "E"
+        ],
+        [
+          16,
+          24,
+          "E"
+        ],
+        [
+          13,
+          26,
+          "SSSSSS"
+        ],
+        [
+          8,
+          30,
+          "HHHHHH"
+        ],
+        [
+          18,
+          30,
+          "HHHHHH"
+        ]
+      ]
+    },
+    {
+      "when": {
+        "state": "limit",
+        "frame": 3
+      },
+      "lines": [
+        [
+          15,
+          0,
+          "GG"
+        ],
+        [
+          9,
+          8,
+          "GGGGGGGGGGGGGG"
+        ],
+        [
+          6,
+          10,
+          "HS"
+        ],
+        [
+          24,
+          10,
+          "SH"
+        ],
+        [
+          9,
+          17,
+          "DDDDDDDDDDDDDD"
+        ],
+        [
+          13,
+          23,
+          "EAAE"
+        ],
+        [
+          13,
+          24,
+          "E"
+        ],
+        [
+          16,
+          24,
+          "E"
+        ],
+        [
+          13,
+          26,
+          "SSSSSS"
+        ],
+        [
+          8,
+          30,
+          "HHHHHH"
+        ],
+        [
+          18,
+          30,
+          "HHHHHH"
+        ]
+      ]
+    }
+  ]
+}

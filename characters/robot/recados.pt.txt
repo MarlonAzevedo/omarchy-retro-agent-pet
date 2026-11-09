@@ -1,0 +1,44 @@
+[trabalhando]
+Braços mecânicos prontos para ajudar.
+Mais uma ideia tomando forma.
+Sigo aqui, de olho no progresso.
+
+[pedido]
+Alerta: entrada humana necessária.
+Preciso da sua atenção um instante.
+Uma permissão está pendente.
+
+[limite]
+Sensores detectaram limite próximo.
+Vale conferir o uso antes de seguir.
+A reserva está ficando curta.
+
+[foco]
+Rotina de foco iniciada.
+O foco está valendo.
+Vamos manter o ritmo.
+
+[dormindo]
+Entrando em modo de recarga.
+Estou em modo descanso.
+Até já; vou fechar os olhos.
+
+[animado]
+Motores em ritmo de festa!
+Gosto desse ritmo.
+O dia ganhou energia.
+
+[normal]
+Todos os sistemas estáveis.
+Tudo tranquilo deste lado.
+Pode contar comigo.
+
+[cansado]
+A bateria está pedindo recarga.
+Já trabalhamos bastante hoje.
+Hora de respirar um pouco.
+
+[emburrado]
+Aguardando comando humano há tempo demais.
+Essa decisão não se resolve sozinha.
+Vou esperar você responder.

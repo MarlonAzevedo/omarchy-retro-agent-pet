@@ -1,11 +1,15 @@
 import QtQuick
+import Quickshell.Io
 import "Model.js" as Model
 
 Item {
   id: root
 
   property string character: "computer"
+  property var definition: null
+  property var loadedDefinition: null
   property string petState: "idle"
+  property string mood: "normal"
   property color inkColor: "#202630"
   property color outlineColor: inkColor
   property color bodyColor: "#f3e5c8"
@@ -13,7 +17,8 @@ Item {
   property color accentColor: "#79bdc5"
   property color warningColor: "#e06a59"
   property int frame: 0
-  readonly property var rows: Model.petRows(petState, frame, character, width >= 32)
+  readonly property int frameCount: definition && Number(definition.frames) > 0 ? definition.frames : loadedDefinition && Number(loadedDefinition.frames) > 0 ? loadedDefinition.frames : 2
+  readonly property var rows: Model.petRows(petState, frame, definition || loadedDefinition || character, width >= 32, mood)
   readonly property int gridSize: rows.length
 
   implicitWidth: 16
@@ -36,15 +41,22 @@ Item {
 
   onCharacterChanged: frame = 0
 
+  FileView {
+    path: root.definition ? "" : Qt.resolvedUrl("characters/" + root.character + ".json").toString().replace("file://", "")
+    printErrors: false
+    onLoaded: root.loadedDefinition = Model.characterFromJson(text(), root.character + ".json")
+    onLoadFailed: root.loadedDefinition = null
+  }
+
   onPetStateChanged: {
     frame = 0
   }
 
   Timer {
-    interval: root.petState === "working" ? 280 : root.petState === "attention" || root.petState === "limit" ? 420 : 0
+    interval: root.petState === "working" || root.petState === "celebrate" ? 280 : root.petState === "attention" || root.petState === "limit" ? 420 : 0
     running: interval > 0
     repeat: true
-    onTriggered: root.frame = (root.frame + 1) % (root.character === "robot" ? 4 : 2)
+    onTriggered: root.frame = (root.frame + 1) % (root.petState === "celebrate" ? Math.max(2, root.frameCount) : root.frameCount)
   }
 
   Repeater {

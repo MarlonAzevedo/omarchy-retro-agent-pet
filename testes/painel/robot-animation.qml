@@ -10,7 +10,13 @@ Window {
   height: 200
   property string initialRows: ""
   property int step: 0
-  Pet { id: pet; character: "robot"; width: 192; height: 192 }
+  Pet {
+    id: pet
+    character: "robot"
+    definition: ({ id: "robot", frames: 4, base: Array(16).fill("................"),
+      eyes: [[5, 6], [10, 6]], face: "F", mouth: [[7, 8], [8, 8]], work: [[6, 12], [9, 12]], overlays: [], detail: [] })
+    width: 192; height: 192
+  }
   Timer {
     interval: 900
     running: true

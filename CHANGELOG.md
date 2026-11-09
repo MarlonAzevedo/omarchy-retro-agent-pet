@@ -8,6 +8,11 @@ All notable changes to Retro Agent Pet are documented here. The format is based 
 
 ### Added
 
+- Built-in characters now live in JSON files; valid characters and translated
+  messages can also be added under the user's configuration directory.
+- Petting on the Home screen, daily mood in the face and summary, a message
+  balloon, and fireworks for completed sessions, focus rounds and reply milestones.
+- `PRIVACIDADE.md` documents local data and removal.
 - Axolotl character, with gills that flutter while an agent works, waits for you
   or nears a usage limit. Available in the panel picker and `agent-pet pet axolotl`.
 

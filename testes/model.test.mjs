@@ -1,6 +1,8 @@
 import { readFileSync } from "node:fs"
 const source = readFileSync(new URL("../Model.js", import.meta.url), "utf8").replace(/^\.pragma library\s*/, "")
-const Model = new Function(source + "; return { characterId, sortSessions, hasAttention, alarmingLimit, visible, formatDuration, limitPercent, sessionElapsed, petState, petRows, windowShort, resetLabel, sessionName, activityText, permissionText, shortDuration, runningCount, depletionTime, visibleRecords, visibleSessions, agentLabel, limitRecords, pickRecord, keepLimits, jsonFiles, usageRecords, dayRows, modelRows, focusPhase, focusClock, claimOnce, focusMessage, hooksText, language, t, format }")()
+const Model = new Function(source + "; return { characterId, characterFromJson, setCharacters, sortSessions, hasAttention, alarmingLimit, visible, formatDuration, limitPercent, sessionElapsed, petState, petRows, windowShort, resetLabel, sessionName, activityText, permissionText, shortDuration, runningCount, depletionTime, visibleRecords, visibleSessions, agentLabel, limitRecords, pickRecord, keepLimits, jsonFiles, usageRecords, dayRows, modelRows, focusPhase, focusClock, claimOnce, focusMessage, hooksText, language, t, format }")()
+Model.setCharacters(["computer", "cat", "robot", "dog", "axolotl"].map(id =>
+  Model.characterFromJson(readFileSync(new URL(`../characters/${id}.json`, import.meta.url), "utf8"), `${id}.json`)), [])
 let failures = 0
 
 function expect(name, actual, expected) {
