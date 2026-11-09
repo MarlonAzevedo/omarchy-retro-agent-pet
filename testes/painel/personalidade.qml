@@ -45,12 +45,24 @@ Window {
       panel.petState = "idle"
       panel.builtinRecadoText = "[animado]\nFrase do pet"
       test.check(panel.recadoText === "Frase do pet", "Recado não chegou ao Início")
+      panel.userRecadoText = "[animado]\nRecado próprio"
+      test.check(panel.recadoText === "Recado próprio", "Recado do usuário não substituiu o embutido")
       var balloon = test.find(panel, "recadoBalloon")
       var homePet = test.find(panel, "homePet")
       var barPet = test.find(panel, "barPet")
       test.check(!!balloon && balloon.visible && !!homePet && !!barPet, "Balão ou pets ausentes")
+      test.check(balloon.parent === homePet.parent && balloon.parent.children.indexOf(balloon) < balloon.parent.children.indexOf(homePet), "Balão não ficou acima do pet")
+      var summary = test.find(panel, "todaySummary")
+      test.check(!!summary && summary.text.indexOf("animado") >= 0, "Humor ausente do resumo em português")
+      panel.config = { character: "custom", language: "en" }
+      test.check(summary.text.indexOf("Today") >= 0 && summary.text.indexOf("excited") >= 0, "Humor ausente do resumo em inglês")
+      panel.config = { character: "custom", language: "pt" }
       test.check(test.find(panel, "celebrationTimer").interval === 2400, "Fogos sem duração de 2,4 s")
       test.check(test.find(panel, "pettedTimer").interval === 2000, "Carinho sem duração de 2 s")
+      panel.sessions = [{ session_id: "work", status: "working" }]
+      test.check(panel.petState === "working", "Sessão em trabalho não mudou estado")
+      panel.sessions = []
+      test.check(panel.petState === "celebrate", "Fim de sessão não mostrou fogos")
       panel.petState = "celebrate"
       panel.config = { character: "custom", language: "pt", discreet: true }
       test.check(!balloon.visible, "Balão aparece no modo discreto")

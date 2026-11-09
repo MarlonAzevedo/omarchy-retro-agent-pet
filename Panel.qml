@@ -822,6 +822,7 @@ Panel {
             }
           }
           Text {
+            objectName: "todaySummary"
             Layout.fillWidth: true
             horizontalAlignment: Text.AlignHCenter
             text: root.trf("todaySummary", [Number(root.daily.completed_responses || 0), Model.formatDuration(root.daily.active_seconds || 0), root.tr("mood" + root.currentMood.charAt(0).toUpperCase() + root.currentMood.slice(1))])
