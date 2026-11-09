@@ -103,5 +103,31 @@ Item {
       var drawn = panel.characters.map(function(item) { return test.find(panel, "preview-" + item.id).rows.join("") })
       compare(drawn.filter(function(rows, i) { return drawn.indexOf(rows) === i }).length, drawn.length, "Prévias repetem o mesmo desenho")
     }
+
+    // Regressão: limite de um agente deixava o pet em alerta com outro selecionado
+    function test_limit_follows_selected_agent() {
+      var panel = loader.item
+      panel.sessions = []
+      panel.usageRecords = [
+        { id: "claude", todayPrompts: 1, limits: [{ label: "5h", percent: 0.2 }] },
+        { id: "codex", todayPrompts: 1, limits: [{ label: "5h", percent: 1 }] } ]
+      panel.screen = "home"
+      panel.selectedAgent = "codex"
+      compare(panel.computedPetState, "limit")
+      verify(panel.alarm, "Agente selecionado no limite deveria alertar")
+      panel.selectedAgent = "claude"
+      compare(panel.computedPetState, "idle")
+      verify(!panel.alarm, "Limite de outro agente não deveria alertar")
+      compare(panel.currentMood, "normal")
+      tryCompare(panel, "petState", "idle")
+      wait(50)
+      var area = test.find(panel, "pettingArea")
+      mouseMove(area, 20, 20)
+      mouseMove(area, 80, 20)
+      mouseMove(area, 20, 20)
+      mouseMove(area, 80, 20)
+      mouseMove(area, 20, 20)
+      compare(panel.petState, "petted")
+    }
   }
 }

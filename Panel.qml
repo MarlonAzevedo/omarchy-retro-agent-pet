@@ -45,7 +45,7 @@ Panel {
   property var usageRecords: []
   property var daily: ({ date: "", completed_responses: 0, active_seconds: 0 })
   property string dailyObservedPath: ""
-  readonly property string currentMood: Model.mood(shownSessions, allLimits, daily, nowMs)
+  readonly property string currentMood: Model.mood(shownSessions, agentLimits, daily, nowMs)
   property var lastCelebration: null
   property var petting: null
   property var builtinRecadoText: null
@@ -67,8 +67,9 @@ Panel {
   readonly property var shownSessions: Model.visibleSessions(sessions, hiddenAgents)
   readonly property var orderedSessions: Model.sortSessions(shownSessions)
   readonly property bool attention: Model.hasAttention(shownSessions)
-  readonly property bool alarm: attention || Model.alarmingLimit(allLimits, 90)
-  readonly property string computedPetState: Model.petState(shownSessions, allLimits, nowMs, focusing)
+  // Limite só do agente selecionado no menu; os outros não deixam o pet em alerta
+  readonly property bool alarm: attention || Model.alarmingLimit(agentLimits, 90)
+  readonly property string computedPetState: Model.petState(shownSessions, agentLimits, nowMs, focusing)
   property string petState: "idle"
   readonly property color secondTint: Qt.hsla((Math.max(0, Commons.Color.accent.hslHue) + 0.12) % 1, Math.max(0.35, Commons.Color.accent.hslSaturation), Commons.Color.accent.hslLightness, 1)
   // Gráficos por agente: o seletor escolhe de quem são os limites mostrados
@@ -80,13 +81,6 @@ Panel {
   // Tela Agentes: o Omarchy manda todo provedor que conhece; só os com uso, ocultos inclusive
   readonly property var agentList: Model.usageRecords(usageRecords, [])
   readonly property var usageRecord: Model.pickRecord(usageList, selectedAgent)
-  readonly property var allLimits: {
-    var result = []
-    var records = Model.visibleRecords(usageRecords, hiddenAgents)
-    for (var i = 0; i < records.length; i++)
-      if (records[i] && Array.isArray(records[i].limits)) result = result.concat(records[i].limits)
-    return result
-  }
 
   Process {
     id: sessionScan

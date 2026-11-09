@@ -23,6 +23,9 @@ All notable changes to Retro Agent Pet are documented here. The format is based 
 ### Fixed
 
 - Character picker previews were blank: each card now draws its own character.
+- One agent at its usage limit no longer keeps the pet alarmed: the limit state,
+  the blinking bar icon and the tired mood follow the agent selected in the panel,
+  so petting works again when another agent is selected.
 
 - The Agentes screen lists only agents with usage data. Omarchy 4.5 sends a record
   for every provider it knows (Copilot, Cursor, DeepSeek, Fireworks…), so installed

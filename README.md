@@ -34,7 +34,8 @@ the home pet is larger and keeps its square proportions:
   to pet it. Its face and message reflect today's activity; the message changes
   with the state or after ten minutes. Fireworks mark a completed session,
   the end of a focus timer and each 25 completed replies. Discreet mode keeps
-  fireworks off the bar icon and hides the message.
+  fireworks off the bar icon and hides the message. Only the selected agent's
+  limits put the pet in the limit state; pick another agent and it calms down.
 - **Sessões** — one card per session: project, agent, current activity
   (`Editando Hero.tsx`, `Bash · npm test`) and how long it has been running.
 - **Limites** — the main window of the selected agent in a big gauge and, when
