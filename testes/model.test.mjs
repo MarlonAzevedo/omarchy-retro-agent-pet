@@ -126,6 +126,9 @@ expect("hidden agent hides its sessions", Model.visibleSessions(mixed, ["codex"]
 expect("missing agent counts as claude", Model.visibleSessions(mixed, ["claude"]).map(item => item.session_id), ["a"])
 expect("codex label", Model.agentLabel({ agent: "codex" }), "Codex")
 expect("default label", Model.agentLabel({}), "Claude Code")
+expect("antigravity label", Model.agentLabel({ agent: "agy" }), "Antigravity")
+expect("agy command activity", Model.activityText({ status: "working", current_tool: "run_command", tool_detail: "npm test" }), "Rodando npm test")
+expect("agy edit activity", Model.activityText({ status: "working", current_tool: "edit_file", tool_detail: "Hero.tsx" }), "Editando Hero.tsx")
 
 const usage = [
   { id: "claude", limits: [{ label: "Session (5-hour)", percent: 0.2 }] },
@@ -208,7 +211,7 @@ expect("work message", Model.focusMessage({ phase: "work", round: 2, rounds: 4 }
 expect("break message", Model.focusMessage({ phase: "break", round: 1, rounds: 4 }, focus), "Pausa de 5 min · rodada 1/4 concluída")
 expect("done message", Model.focusMessage({ phase: "done", round: 4, rounds: 4 }, focus), "Foco concluído · 4 rodadas")
 
-expect("hooks ok text", Model.hooksText("ok"), "Acompanhando Claude Code e Codex")
+expect("hooks ok text", Model.hooksText("ok"), "Acompanhando Claude Code, Codex e Antigravity")
 expect("hooks missing text", Model.hooksText("missing"), "Desativado: ative para ver as sessões dos agentes")
 expect("hooks error text", Model.hooksText("error"), "Falhou; rode bin/agent-pet setup na pasta do plugin")
 

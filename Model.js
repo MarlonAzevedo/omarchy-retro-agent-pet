@@ -16,12 +16,12 @@ var TEXTS = {
     agents: "Agentes", noLimits: "Sem limites", noAgents: "Nenhum agente encontrado", discreet: "Modo discreto",
     discreetHint: "Sem notificações e sem piscar o ícone", enable: "Ativar", language: "Idioma", auto: "Automático",
     hiddenHint: "Agentes ocultos saem das telas de início, sessões e limites.", about: "Sobre", version: "versão {0}",
-    license: "licença {0}", aboutText: "Acompanha as sessões do Claude Code e do Codex, os pedidos de permissão, os limites e o uso de cada agente.",
+    license: "licença {0}", aboutText: "Acompanha as sessões do Claude Code, do Codex e do Antigravity CLI, os pedidos de permissão, os limites e o uso de cada agente.",
     createdBy: "Criado por", email: "E-mail", project: "Projeto", issues: "Problemas", openIssue: "abrir uma issue",
     credits: "Uso e limites: coletores do widget Agents do Omarchy. Inspirado no Mupli.", home: "Início", request: "Pedido",
     asked: "Pediu permissão", waitingAnswer: "Esperando resposta", idle: "Ocioso", thinking: "Pensando",
     focusDone: "Foco concluído · {0} rodadas", focusBreak: "Pausa de {0} min · rodada {1}/{2} concluída", focusWork: "Foco: rodada {0}/{1} · {2} min",
-    hooksOk: "Acompanhando Claude Code e Codex", hooksMissing: "Desativado: ative para ver as sessões dos agentes", hooksInstalling: "Ativando…",
+    hooksOk: "Acompanhando Claude Code, Codex e Antigravity", hooksMissing: "Desativado: ative para ver as sessões dos agentes", hooksInstalling: "Ativando…",
     hooksError: "Falhou; rode bin/agent-pet setup na pasta do plugin", hooksChecking: "Conferindo…", inTime: "em {0}", today: "Hoje"
   },
   en: {
@@ -38,21 +38,23 @@ var TEXTS = {
     agents: "Agents", noLimits: "No limits", noAgents: "No agents found", discreet: "Discreet mode",
     discreetHint: "No notifications and no blinking icon", enable: "Turn on", language: "Language", auto: "Automatic",
     hiddenHint: "Hidden agents leave the home, sessions and limits screens.", about: "About", version: "version {0}",
-    license: "license {0}", aboutText: "Follows your Claude Code and Codex sessions, permission requests, limits and usage per agent.",
+    license: "license {0}", aboutText: "Follows your Claude Code, Codex and Antigravity CLI sessions, permission requests, limits and usage per agent.",
     createdBy: "Created by", email: "E-mail", project: "Project", issues: "Issues", openIssue: "open an issue",
     credits: "Usage and limits: collectors of Omarchy's Agents widget. Inspired by Mupli.", home: "Home", request: "Request",
     asked: "Asked for permission", waitingAnswer: "Waiting for an answer", idle: "Idle", thinking: "Thinking",
     focusDone: "Focus done · {0} rounds", focusBreak: "{0} min break · round {1}/{2} done", focusWork: "Focus: round {0}/{1} · {2} min",
-    hooksOk: "Following Claude Code and Codex", hooksMissing: "Off: turn it on to see your agents' sessions", hooksInstalling: "Turning on…",
+    hooksOk: "Following Claude Code, Codex and Antigravity", hooksMissing: "Off: turn it on to see your agents' sessions", hooksInstalling: "Turning on…",
     hooksError: "Failed; run bin/agent-pet setup in the plugin folder", hooksChecking: "Checking…", inTime: "in {0}", today: "Today"
   }
 }
 var DAYS = { pt: ["dom", "seg", "ter", "qua", "qui", "sex", "sáb"], en: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"] }
 var VERBS = {
   pt: { Edit: "Editando", apply_patch: "Editando", MultiEdit: "Editando", Write: "Escrevendo", Read: "Lendo", NotebookEdit: "Editando",
-    Grep: "Buscando", Glob: "Buscando", WebSearch: "Pesquisando", Task: "Subagente ·", Agent: "Subagente ·" },
+    Grep: "Buscando", Glob: "Buscando", WebSearch: "Pesquisando", Task: "Subagente ·", Agent: "Subagente ·",
+    read_file: "Lendo", write_file: "Escrevendo", edit_file: "Editando", run_command: "Rodando" },
   en: { Edit: "Editing", apply_patch: "Editing", MultiEdit: "Editing", Write: "Writing", Read: "Reading", NotebookEdit: "Editing",
-    Grep: "Searching", Glob: "Searching", WebSearch: "Searching the web", Task: "Subagent ·", Agent: "Subagent ·" }
+    Grep: "Searching", Glob: "Searching", WebSearch: "Searching the web", Task: "Subagent ·", Agent: "Subagent ·",
+    read_file: "Reading", write_file: "Writing", edit_file: "Editing", run_command: "Running" }
 }
 
 // "pt" ou "en": escolha do config, ou o LANG do sistema no automático
@@ -269,7 +271,7 @@ function depletionTime(limit, now) {
   return end < reset ? end : null
 }
 
-var AGENT_LABELS = { claude: "Claude Code", codex: "Codex" }
+var AGENT_LABELS = { claude: "Claude Code", codex: "Codex", agy: "Antigravity" }
 
 function agentLabel(session) {
   var agent = session && session.agent || "claude"

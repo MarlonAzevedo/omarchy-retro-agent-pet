@@ -6,6 +6,19 @@ All notable changes to Retro Agent Pet are documented here. The format is based 
 
 ## [Unreleased]
 
+### Added
+
+- Antigravity CLI (`agy`) sessions are followed again. Setup adds a
+  `retro-agent-pet` block to `~/.gemini/config/hooks.json` when that folder
+  exists; usage and limits come from Omarchy's `agy` collector.
+
+### Fixed
+
+- The `agy` hook writes nothing back: `agy` 1.5 blocks every tool when a
+  `PreToolUse` hook answers `{}`, and an empty answer leaves its permissions alone.
+- `agy` sessions are saved under the id `agy`, the one Omarchy uses, so hiding
+  Antigravity on the Agents screen also hides its sessions.
+
 ## [0.8.0] - 2026-11-09
 
 ### Added

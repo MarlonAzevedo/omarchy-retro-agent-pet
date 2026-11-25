@@ -4,7 +4,8 @@
 
 ![Retro Agent Pet panel: home with usage gauges and focus timer, sessions, usage and character settings](preview.png)
 
-Retro Agent Pet watches your local **Claude Code** and **Codex** sessions and shows,
+Retro Agent Pet watches your local **Claude Code**, **Codex** and **Antigravity CLI**
+(`agy`) sessions and shows,
 at a glance, who is working, who is waiting for you and how much of each
 agent's usage limit is left. The little computer on the bar changes face with
 the state of your sessions: it works, celebrates, sleeps, and blinks red when an
@@ -78,6 +79,13 @@ existing hooks are kept; nothing is written until you click or confirm. Codex ru
 trust them: start a new Codex session and choose **Trust all and continue** when it
 asks (`/hooks` shows whether they are active).
 
+When the Antigravity CLI is installed (`~/.gemini/config/` exists), setup also adds
+a `retro-agent-pet` block to `~/.gemini/config/hooks.json`. `agy` has no session-end
+or permission hook, so its sessions show work and idle (never "needs you") and
+leave the panel when the `agy` process exits. The hook writes nothing back, so it
+never allows or blocks an `agy` tool. Usage and limits come from Omarchy's `agy`
+collector.
+
 Left click opens the panel; right click launches your default agent
 (`omarchy-agent --pick`), like the Agents widget. To open it from the keyboard,
 add a binding to `~/.config/hypr/bindings.lua` (pick a free key with
@@ -95,7 +103,7 @@ itself can be turned off: `omarchy plugin disable omarchy.agents`.
 ### Requirements
 
 - Omarchy 4 (Omarchy Shell) and `python3`.
-- Claude Code and/or Codex. Usage and limits come from Omarchy's own collectors
+- Claude Code, Codex and/or Antigravity CLI. Usage and limits come from Omarchy's own collectors
   (`omarchy-agent-usage-update`); for Codex, install it the Omarchy way
   (`omarchy-mise-install codex`) so the collector can find it.
 
@@ -114,7 +122,8 @@ rm -rf ~/.local/state/agent-pet ~/.config/agent-pet   # optional: state and sett
 ```
 
 Then delete the hook entries that run `pet-hook.py` from
-`~/.claude/settings.json` and `~/.codex/hooks.json`.
+`~/.claude/settings.json` and `~/.codex/hooks.json`, and the `retro-agent-pet`
+block from `~/.gemini/config/hooks.json`.
 
 ## Privacy
 
@@ -215,7 +224,7 @@ hot reload keeps components it already compiled.
 ## Português
 
 Retro Agent Pet é um computadorzinho na barra do Omarchy que acompanha as sessões
-locais do Claude Code e do Codex: quem está trabalhando, quem precisa de você,
+locais do Claude Code, do Codex e do Antigravity CLI: quem está trabalhando, quem precisa de você,
 os limites e o uso de cada agente (tokens por dia e por modelo) e o resumo do
 dia, com um timer de foco (pomodoro) e um modo discreto. O clique direito abre o agente padrão, e o widget Agents do Omarchy pode
 ser desativado. Instale com o comando da seção **Install** e, para acompanhar as sessões, clique em

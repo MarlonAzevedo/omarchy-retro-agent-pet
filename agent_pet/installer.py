@@ -33,8 +33,10 @@ CODEX_EVENTS = {
 }
 # Codex roda SessionEnd sempre síncrono e avisa se vier com async
 CODEX_SYNC_EVENTS = {"SessionEnd"}
-# Bloco do Antigravity CLI instalado pela 0.4.0 (suporte removido)
-OLD_ANTIGRAVITY_HOOK = "retro-agent-pet"
+# Antigravity CLI (agy): blocos com nome; eventos de ferramenta usam matcher
+ANTIGRAVITY_HOOK = "retro-agent-pet"
+ANTIGRAVITY_EVENTS = ("SessionStart", "PreInvocation", "PreToolUse", "PostToolUse", "Stop")
+ANTIGRAVITY_TOOL_EVENTS = {"PreToolUse", "PostToolUse"}
 
 
 def write_settings_atomically(path, content):
@@ -112,17 +114,22 @@ def _merge_hooks(settings, command, events=EVENTS, sync_events=()):
     return settings
 
 
-def _drop_old_antigravity(settings):
-    settings.pop(OLD_ANTIGRAVITY_HOOK, None)
+def _merge_antigravity(settings, project_root):
+    # O bloco é todo do Agent Pet: regravar resolve caminho antigo e duplicata
+    spec = {}
+    for event_name in ANTIGRAVITY_EVENTS:
+        handler = {"type": "command", "command": f"{_hook_command(project_root, 'agy')} --event {event_name}", "timeout": 5}
+        spec[event_name] = [{"matcher": "", "hooks": [handler]}] if event_name in ANTIGRAVITY_TOOL_EVENTS else [handler]
+    settings[ANTIGRAVITY_HOOK] = spec
     return settings
 
 
-def _targets(project_root, settings_path, codex_hooks_path=None, old_antigravity_path=None):
+def _targets(project_root, settings_path, codex_hooks_path=None, antigravity_hooks_path=None):
     targets = [(Path(settings_path), lambda settings: _merge_hooks(settings, _hook_command(project_root), EVENTS))]
     if codex_hooks_path:
         targets.append((Path(codex_hooks_path), lambda settings: _merge_hooks(settings, _hook_command(project_root, "codex"), CODEX_EVENTS, CODEX_SYNC_EVENTS)))
-    if old_antigravity_path:
-        targets.append((Path(old_antigravity_path), _drop_old_antigravity))
+    if antigravity_hooks_path:
+        targets.append((Path(antigravity_hooks_path), lambda settings: _merge_antigravity(settings, project_root)))
     return targets
 
 
@@ -165,9 +172,9 @@ def _write_merged(settings_path, settings, merged):
     write_settings_atomically(settings_path, (json.dumps(merged, ensure_ascii=False, indent=2) + "\n").encode("utf-8"))
 
 
-def install(settings_path, config_path, project_root, confirm, codex_hooks_path=None, old_antigravity_path=None):
+def install(settings_path, config_path, project_root, confirm, codex_hooks_path=None, antigravity_hooks_path=None):
     config_path = Path(config_path)
-    plans = _plan(_targets(project_root, settings_path, codex_hooks_path, old_antigravity_path))
+    plans = _plan(_targets(project_root, settings_path, codex_hooks_path, antigravity_hooks_path))
     if not confirm:
         return 2
 
@@ -187,21 +194,21 @@ def _setup_paths():
     home = Path.home()
     root = Path(__file__).resolve().parents[1]
     codex_home = Path(os.environ.get("CODEX_HOME") or home / ".codex")
-    old_antigravity_path = home / ".gemini" / "config" / "hooks.json"
+    antigravity_config = home / ".gemini" / "config"
     return (
         root,
         home / ".claude" / "settings.json",
         home / ".config" / "agent-pet" / "config.json",
         codex_home / "hooks.json" if codex_home.is_dir() else None,
-        old_antigravity_path if old_antigravity_path.is_file() else None,
+        antigravity_config / "hooks.json" if antigravity_config.is_dir() else None,
     )
 
 
 def check():
     # 0: hooks instalados; 3: falta instalar ou atualizar (usado pelo painel)
-    root, settings_path, _, codex_hooks_path, old_antigravity_path = _setup_paths()
+    root, settings_path, _, codex_hooks_path, antigravity_hooks_path = _setup_paths()
     try:
-        plans = _plan(_targets(root, settings_path, codex_hooks_path, old_antigravity_path))
+        plans = _plan(_targets(root, settings_path, codex_hooks_path, antigravity_hooks_path))
     except (OSError, ValueError) as error:
         print(f"Falha ao conferir: {error}", file=sys.stderr)
         return 1
@@ -209,12 +216,14 @@ def check():
 
 
 def setup(assume_yes=False):
-    root, settings_path, config_path, codex_hooks_path, old_antigravity_path = _setup_paths()
+    root, settings_path, config_path, codex_hooks_path, antigravity_hooks_path = _setup_paths()
     print(f"Será instalado o monitor de sessões em {settings_path}.")
     if codex_hooks_path:
         print(f"Codex encontrado: também em {codex_hooks_path} (aprove ao abrir uma sessão nova do Codex: 'Trust all and continue').")
+    if antigravity_hooks_path:
+        print(f"Antigravity CLI encontrado: também em {antigravity_hooks_path}.")
     try:
-        plans = _plan(_targets(root, settings_path, codex_hooks_path, old_antigravity_path))
+        plans = _plan(_targets(root, settings_path, codex_hooks_path, antigravity_hooks_path))
         if any(merged != settings for _, settings, merged in plans):
             print("Os hooks serão mesclados à configuração existente; os hooks atuais serão preservados.")
         else:
@@ -226,7 +235,7 @@ def setup(assume_yes=False):
                 return 2
             if answer not in {"s", "sim", "y", "yes"}:
                 return 2
-        return install(settings_path, config_path, root, True, codex_hooks_path, old_antigravity_path)
+        return install(settings_path, config_path, root, True, codex_hooks_path, antigravity_hooks_path)
     except (OSError, ValueError, json.JSONDecodeError) as error:
         print(f"Falha na instalação: {error}", file=sys.stderr)
         return 1
