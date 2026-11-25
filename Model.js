@@ -300,6 +300,18 @@ function jsonFiles(text) {
   return String(text || "").split("\n").filter(function(path) { return path.endsWith(".json") }).sort()
 }
 
+// Personagem: linhas "caminho\ttamanho\tdata" do find; tamanho e data na chave recarregam o arquivo editado
+var CHARACTER_MAX_BYTES = 262144
+var RECADO_MAX_BYTES = 65536
+function characterFiles(text, maxBytes, suffix) {
+  var limit = maxBytes || CHARACTER_MAX_BYTES
+  return String(text || "").split("\n").filter(function(line) {
+    var parts = line.split("\t")
+    var size = Number(parts[1])
+    return parts.length === 3 && parts[0].endsWith(suffix || ".json") && parts[1] !== "" && size >= 0 && size <= limit
+  }).sort()
+}
+
 // Falha passageira do coletor grava limites vazios; mantém os últimos bons até maxAgeMs
 function keepLimits(previous, current, now, maxAgeMs) {
   return (current || []).map(function(record) {

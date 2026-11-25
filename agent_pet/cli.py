@@ -3,6 +3,7 @@ import json
 import math
 import os
 import re
+import stat
 import sys
 import time
 from datetime import datetime
@@ -67,6 +68,20 @@ def valid_character(item, filename):
     return True
 
 
+CHARACTER_MAX_BYTES = 262144
+
+
+def _read_character(path):
+    # Igual ao painel: só arquivo comum (sem seguir link) e no máximo 256 KiB
+    if not stat.S_ISREG(path.lstat().st_mode):
+        return None
+    with path.open("rb") as file:
+        data = file.read(CHARACTER_MAX_BYTES + 1)
+    if len(data) > CHARACTER_MAX_BYTES:
+        return None
+    return json.loads(data.decode("utf-8"))
+
+
 def characters():
     builtins = Path(__file__).resolve().parents[1] / "characters"
     user = config_path().parent / "characters"
@@ -74,7 +89,7 @@ def characters():
     for directory in (builtins, user):
         for path in sorted(directory.glob("*.json")):
             try:
-                item = json.loads(path.read_text(encoding="utf-8"))
+                item = _read_character(path)
             except (OSError, ValueError, UnicodeError):
                 continue
             if not valid_character(item, path.stem):

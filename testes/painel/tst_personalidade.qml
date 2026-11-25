@@ -38,10 +38,15 @@ Item {
       verify(!!scan, "Busca de personagens ausente")
       compare(scan.command[0], "find")
       compare(scan.command[2], configHome + "/agent-pet/characters")
-      scan.stdout.text = panel.builtinCharactersDir + "/computer.json\n" + userPath + "\n"
+      // Regressão (#14507): só arquivos comuns e pequenos chegam ao FileView
+      verify(scan.command.indexOf("-type") > 0 && scan.command[scan.command.indexOf("-type") + 1] === "f", "find sem -type f")
+      verify(scan.command.indexOf("-size") > 0 && scan.command[scan.command.indexOf("-size") + 1] === "-256k", "find sem limite de tamanho")
+      var bigPath = configHome + "/agent-pet/characters/big.json"
+      scan.stdout.text = panel.builtinCharactersDir + "/computer.json\t20000\t1\n" + userPath + "\t2000\t1\n" + bigPath + "\t999999999\t1\n"
       scan.stdout.streamFinished()
       tryVerify(function() { return panel.characters.some(function(item) { return item.id === "custom" }) })
       compare(panel.characters.filter(function(item) { return item.id === "custom" })[0].name.pt, "Meu pet")
+      compare(panel.characterFiles.filter(function(entry) { return entry.indexOf(bigPath) === 0 }).length, 0, "Personagem grande foi carregado")
       panel.config = { character: "computer", language: "pt" }
       panel.screen = "agents"
       wait(100)
@@ -82,6 +87,30 @@ Item {
       verify(!balloon.visible, "Modo discreto deveria ocultar o balão")
     }
 
+    // Regressão (#14507): recados do usuário também passam pelo limite de tamanho antes da leitura
+    function test_user_recados_size_limit() {
+      var configHome = StandardPaths.writableLocation(StandardPaths.GenericConfigLocation)
+      Quickshell.envOverrides = { XDG_CONFIG_HOME: configHome }
+      Quickshell.readFiles = true
+      loader.active = false
+      loader.active = true
+      tryCompare(loader, "status", Loader.Ready)
+      var panel = loader.item
+      panel.config = { character: "computer", language: "pt" }
+      var scan = test.find(panel, "recadoScan")
+      verify(!!scan, "Busca de recados ausente")
+      compare(scan.command[1], configHome + "/agent-pet/characters/computer")
+      verify(scan.command.indexOf("-type") > 0 && scan.command[scan.command.indexOf("-type") + 1] === "f", "find sem -type f")
+      verify(scan.command.indexOf("-size") > 0 && scan.command[scan.command.indexOf("-size") + 1] === "-64k", "find sem limite de tamanho")
+      var path = configHome + "/agent-pet/characters/computer/recados.pt.txt"
+      scan.stdout.text = path + "\t30\t1\n"
+      scan.stdout.streamFinished()
+      tryVerify(function() { return String(panel.userRecadoText || "").indexOf("Recado meu") >= 0 })
+      scan.stdout.text = path + "\t999999999\t2\n"
+      scan.stdout.streamFinished()
+      tryCompare(panel, "userRecadoText", null)
+    }
+
     // Regressão: prévias do seletor apareciam vazias
     function test_picker_draws_characters() {
       var panel = loader.item
@@ -91,7 +120,7 @@ Item {
       Quickshell.readFiles = true
       var scan = test.find(panel, "characterScan")
       scan.stdout.text = ["computer", "cat", "robot", "dog", "axolotl"].map(function(id) {
-        return panel.builtinCharactersDir + "/" + id + ".json" }).join("\n") + "\n"
+        return panel.builtinCharactersDir + "/" + id + ".json\t20000\t1" }).join("\n") + "\n"
       scan.stdout.streamFinished()
       tryVerify(function() { return panel.characters.length === 5 })
       wait(100)

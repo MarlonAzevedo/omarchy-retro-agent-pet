@@ -50,6 +50,7 @@ Panel {
   property var petting: null
   property var builtinRecadoText: null
   property var userRecadoText: null
+  property string userRecadoEntry: ""
   readonly property var recados: Model.chooseRecados(userRecadoText, builtinRecadoText)
   readonly property string currentRecadoSection: Model.recadoSection(petState, currentMood)
   property string recadoText: ""
@@ -93,12 +94,13 @@ Panel {
   Process {
     id: characterScan
     objectName: "characterScan"
-    command: ["find", root.builtinCharactersDir, root.charactersDir, "-maxdepth", "1", "-name", "*.json", "-printf", "%p\\n"]
+    // Só arquivos comuns abaixo de 256 KiB: o FileView lê o arquivo inteiro na memória do shell
+    command: ["find", root.builtinCharactersDir, root.charactersDir, "-maxdepth", "1", "-type", "f", "-name", "*.json", "-size", "-256k", "-printf", "%p\\t%s\\t%T@\\n"]
     stderr: StdioCollector { waitForEnd: true }
     stdout: StdioCollector {
       waitForEnd: true
       onStreamFinished: {
-        var found = Model.jsonFiles(text)
+        var found = Model.characterFiles(text)
         if (JSON.stringify(found) !== JSON.stringify(root.characterFiles)) root.characterFiles = found
       }
     }
@@ -108,7 +110,7 @@ Panel {
     model: root.characterFiles
     delegate: CharacterRecord {
       required property var modelData
-      path: modelData
+      entry: modelData
       onDefinitionChanged: root.collectCharacters()
     }
     onObjectAdded: root.collectCharacters()
@@ -202,16 +204,34 @@ Panel {
     onLoaded: root.builtinRecadoText = text()
     onLoadFailed: root.builtinRecadoText = null
   }
+  // Recados do usuário: lidos só se o find achar um arquivo comum abaixo de 64 KiB; edição muda a chave
+  Process {
+    id: recadoScan
+    objectName: "recadoScan"
+    command: ["find", root.charactersDir + "/" + root.character, "-maxdepth", "1", "-type", "f", "-name", "recados." + root.language + ".txt", "-size", "-64k", "-printf", "%p\\t%s\\t%T@\\n"]
+    stderr: StdioCollector { waitForEnd: true }
+    stdout: StdioCollector {
+      waitForEnd: true
+      onStreamFinished: {
+        var found = Model.characterFiles(text, Model.RECADO_MAX_BYTES, ".txt")[0] || ""
+        if (found !== root.userRecadoEntry) root.userRecadoEntry = found
+      }
+    }
+  }
   FileView {
-    path: root.charactersDir + "/" + root.character + "/recados." + root.language + ".txt"
-    watchChanges: true
+    id: userRecadoFile
+    path: root.userRecadoEntry.split("\t")[0]
     printErrors: false
-    onFileChanged: reload()
     onLoaded: root.userRecadoText = text()
     onLoadFailed: root.userRecadoText = null
   }
-  onCharacterChanged: { builtinRecadoText = null; userRecadoText = null; shownRecadoSection = ""; recadoText = "" }
-  onLanguageChanged: { builtinRecadoText = null; userRecadoText = null; shownRecadoSection = ""; recadoText = "" }
+  onUserRecadoEntryChanged: {
+    if (userRecadoEntry) userRecadoFile.reload()
+    else userRecadoText = null
+  }
+  function scanRecados() { if (!recadoScan.running) recadoScan.running = true }
+  onCharacterChanged: { builtinRecadoText = null; userRecadoText = null; userRecadoEntry = ""; shownRecadoSection = ""; recadoText = ""; scanRecados() }
+  onLanguageChanged: { builtinRecadoText = null; userRecadoText = null; userRecadoEntry = ""; shownRecadoSection = ""; recadoText = ""; scanRecados() }
   onRecadosChanged: { shownRecadoSection = ""; refreshRecado() }
   onCurrentRecadoSectionChanged: refreshRecado()
   function refreshRecado() {
@@ -339,7 +359,10 @@ Panel {
     running: true
     repeat: true
     triggeredOnStart: true
-    onTriggered: if (!characterScan.running) characterScan.running = true
+    onTriggered: {
+      if (!characterScan.running) characterScan.running = true
+      root.scanRecados()
+    }
   }
 
   // Fica na barra com sessões ou com uso registrado, no lugar do widget Agents

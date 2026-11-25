@@ -86,6 +86,26 @@ class CliTests(unittest.TestCase):
         self.assertEqual(self.config.read_bytes(), before)
         self.assertIn("axolotl", self.cli("pet").stdout)
 
+    def test_character_list_skips_special_and_oversized_files(self):
+        # Regressão (#14507): a CLI lia o JSON inteiro e seguia links; /dev/zero travava o comando
+        folder = self.home / "config" / "agent-pet" / "characters"
+        folder.mkdir(parents=True)
+        (folder / "zero.json").symlink_to("/dev/zero")
+        big = json.loads((ROOT / "characters" / "cat.json").read_text(encoding="utf-8"))
+        big["id"] = "big"
+        (folder / "big.json").write_text(json.dumps(big) + " " * 300000, encoding="utf-8")
+        small = dict(big, id="small")
+        (folder / "small.json").write_text(json.dumps(small), encoding="utf-8")
+        try:
+            result = subprocess.run([sys.executable, str(ROOT / "bin" / "agent-pet"), "pet"],
+                                    env=self.env, text=True, capture_output=True, timeout=20)
+        except subprocess.TimeoutExpired:
+            self.fail("agent-pet pet travou lendo /dev/zero")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("small", result.stdout)
+        self.assertNotIn("big", result.stdout)
+        self.assertNotIn("zero", result.stdout)
+
     def test_expired_limit_is_zero_like_panel(self):
         usage = self.home / "state" / "omarchy" / "agents" / "usage"
         self.write(usage / "claude.json", {"id": "claude", "limits": [

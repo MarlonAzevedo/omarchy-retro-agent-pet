@@ -6,6 +6,17 @@ All notable changes to Retro Agent Pet are documented here. The format is based 
 
 ## [Unreleased]
 
+### Security
+
+- Setup backups of agent settings are written with the source file's mode before
+  any byte lands, instead of copying first and fixing the mode after; another
+  local user could read a `0600` settings file in that window.
+- Custom characters and messages are size-checked before they are read: the
+  panel only loads regular files under 256 KiB (characters) and 64 KiB
+  (messages), and no longer re-reads them on every change. `agent-pet pet` skips
+  links, special files and oversized characters, so a link to `/dev/zero` no
+  longer hangs it.
+
 ## [0.9.0] - 2026-11-25
 
 ### Added

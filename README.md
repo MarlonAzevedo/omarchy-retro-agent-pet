@@ -159,15 +159,16 @@ and optional `overlays` and `detail` arrays. The 16×16 pixel alphabet is
 `.OECBFAZX`; `detail` also accepts `HSGD` for the 32×32 version. An overlay
 replaces named rows when its `when` object matches `state`, `frame`, `phase` or
 `awake`. A detail entry draws `[x, y, "pixels"]` lines in the 32×32 image.
-Invalid files are ignored. Built-in characters win when ids are repeated.
+Invalid files are ignored, and so are links, special files and files over 256 KiB.
+Built-in characters win when ids are repeated.
 
 Messages live in `characters/<id>/recados.pt.txt` and `recados.en.txt`. Put one
 phrase per line under `[trabalhando]`, `[pedido]`, `[limite]`, `[foco]`,
 `[dormindo]`, `[animado]`, `[normal]`, `[cansado]` or `[emburrado]`.
 Blank lines and `#` comments are ignored. Your files at
 `~/.config/agent-pet/characters/<id>/recados.<pt|en>.txt` replace the matching
-language's built-in file. The balloon appears on Início and is hidden in
-discreet mode.
+language's built-in file; files over 64 KiB are ignored. The balloon appears on
+Início and is hidden in discreet mode.
 
 ## Command line
 

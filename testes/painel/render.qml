@@ -56,7 +56,7 @@ Window {
         Quickshell.readFiles = true
         var scan = w.findNamed(p, "characterScan")
         scan.stdout.text = ["computer", "cat", "robot", "dog", "axolotl"].map(function(id) {
-          return p.builtinCharactersDir + "/" + id + ".json" }).join("\n") + "\n"
+          return p.builtinCharactersDir + "/" + id + ".json\t20000\t1" }).join("\n") + "\n"
         scan.stdout.streamFinished()
         return
       }

@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs"
 const source = readFileSync(new URL("../Model.js", import.meta.url), "utf8").replace(/^\.pragma library\s*/, "")
-const Model = new Function(source + "; return { characterId, characterFromJson, setCharacters, sortSessions, hasAttention, alarmingLimit, visible, formatDuration, limitPercent, sessionElapsed, petState, petRows, windowShort, resetLabel, sessionName, activityText, permissionText, shortDuration, runningCount, depletionTime, visibleRecords, visibleSessions, agentLabel, limitRecords, pickRecord, keepLimits, jsonFiles, usageRecords, dayRows, modelRows, focusPhase, focusClock, claimOnce, focusMessage, hooksText, language, t, format }")()
+const Model = new Function(source + "; return { characterId, characterFromJson, characterFiles, CHARACTER_MAX_BYTES, RECADO_MAX_BYTES, setCharacters, sortSessions, hasAttention, alarmingLimit, visible, formatDuration, limitPercent, sessionElapsed, petState, petRows, windowShort, resetLabel, sessionName, activityText, permissionText, shortDuration, runningCount, depletionTime, visibleRecords, visibleSessions, agentLabel, limitRecords, pickRecord, keepLimits, jsonFiles, usageRecords, dayRows, modelRows, focusPhase, focusClock, claimOnce, focusMessage, hooksText, language, t, format }")()
 Model.setCharacters(["computer", "cat", "robot", "dog", "axolotl"].map(id =>
   Model.characterFromJson(readFileSync(new URL(`../characters/${id}.json`, import.meta.url), "utf8"), `${id}.json`)), [])
 let failures = 0
@@ -158,6 +158,13 @@ expect("no previous keeps current", Model.keepLimits([], blank, at("2026-10-25T2
 expect("scan order does not depend on write order", Model.jsonFiles("/u/fireworks.json\n/u/codex.json\n/u/claude.json\n"), Model.jsonFiles("/u/claude.json\n/u/fireworks.json\n/u/codex.json\n"))
 expect("scan keeps only json files", Model.jsonFiles("/u/b.json\n/u/.codex.tmp\n\n/u/a.json"), ["/u/a.json", "/u/b.json"])
 expect("empty scan", Model.jsonFiles(""), [])
+
+// Regressão (revisão do marketplace, #14507): personagem enorme era lido inteiro e podia esgotar a memória do shell
+expect("character limit", Model.CHARACTER_MAX_BYTES, 262144)
+expect("character scan drops oversized files", Model.characterFiles("/u/b.json\t300000\t1.5\n/u/a.json\t2048\t1.5\n/u/x.tmp\t10\t1\n", Model.CHARACTER_MAX_BYTES), ["/u/a.json\t2048\t1.5"])
+expect("character scan keeps size and time in the key", Model.characterFiles("/u/a.json\t2049\t2.5\n"), ["/u/a.json\t2049\t2.5"])
+expect("character scan drops lines without size", Model.characterFiles("/u/a.json\n"), [])
+expect("recado scan uses its own limit and suffix", Model.characterFiles("/u/recados.pt.txt\t70000\t1\n/u/recados.en.txt\t300\t1\n", Model.RECADO_MAX_BYTES, ".txt"), ["/u/recados.en.txt\t300\t1"])
 
 // Tela Uso: agentes com dados, tokens por dia e por modelo (como o widget Agents do Omarchy)
 const usageData = [

@@ -31,6 +31,13 @@ class PainelPersonagemTests(unittest.TestCase):
             (characters / "custom.json").write_text(json.dumps(character), encoding="utf-8")
             run_qml(self, "test_choosing_user_character", temp)
 
+    def test_user_recados_size_limit(self):
+        with tempfile.TemporaryDirectory() as temp:
+            folder = Path(temp) / "agent-pet" / "characters" / "computer"
+            folder.mkdir(parents=True)
+            (folder / "recados.pt.txt").write_text("[normal]\nRecado meu\n", encoding="utf-8")
+            run_qml(self, "test_user_recados_size_limit", temp)
+
     def test_petting_gesture(self):
         with tempfile.TemporaryDirectory() as temp:
             run_qml(self, "test_petting_gesture", temp)
