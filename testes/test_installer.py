@@ -7,6 +7,10 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
+import shutil
+import stat
+
+from agent_pet import installer
 from agent_pet.installer import write_settings_atomically
 
 
@@ -55,6 +59,31 @@ class InstallerTests(unittest.TestCase):
         self.assertEqual(self.settings.read_bytes(), installed_bytes)
         installed = json.loads(self.settings.read_text())
         self.assertEqual(sum(1 for entry in installed["hooks"]["Stop"] for hook in entry["hooks"] if "pet-hook.py" in hook.get("command", "")), 1)
+
+    def test_backup_is_never_readable_by_others(self):
+        # Regressão (revisão do marketplace, #14507): copy2 gravava os bytes num backup 0644 e só
+        # depois aplicava o 0600 da origem; outro usuário podia ler o settings.json nesse intervalo
+        self.settings.write_text('{"env": {"TOKEN": "x"}}')
+        self.settings.chmod(0o600)
+        seen = []
+        real_copyfile = shutil.copyfile
+
+        def spy(src, dst, *args, **kwargs):
+            result = real_copyfile(src, dst, *args, **kwargs)
+            seen.append(stat.S_IMODE(os.stat(dst).st_mode))
+            return result
+
+        old_umask = os.umask(0o022)
+        try:
+            with patch("shutil.copyfile", spy):
+                installer.install(self.settings, self.home / "config.json", ROOT, True)
+        finally:
+            os.umask(old_umask)
+        self.assertEqual([mode for mode in seen if mode & 0o077], [])
+        backups = list(self.settings.parent.glob("settings.json.bak.*"))
+        self.assertEqual(len(backups), 1)
+        self.assertEqual(stat.S_IMODE(backups[0].stat().st_mode), 0o600)
+        self.assertEqual(json.loads(backups[0].read_text()), {"env": {"TOKEN": "x"}})
 
     def test_setup_creates_default_notification_config(self):
         result = self.run_setup()

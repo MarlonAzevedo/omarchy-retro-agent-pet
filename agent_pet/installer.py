@@ -1,7 +1,6 @@
 import json
 import os
 import shlex
-import shutil
 import stat
 import sys
 import tempfile
@@ -39,14 +38,15 @@ ANTIGRAVITY_EVENTS = ("SessionStart", "PreInvocation", "PreToolUse", "PostToolUs
 ANTIGRAVITY_TOOL_EVENTS = {"PreToolUse", "PostToolUse"}
 
 
-def write_settings_atomically(path, content):
+def write_settings_atomically(path, content, mode=None):
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
     temp_name = None
     try:
         with tempfile.NamedTemporaryFile(mode="wb", dir=path.parent, prefix=f".{path.name}.", delete=False) as temp_file:
             temp_name = temp_file.name
-            mode = stat.S_IMODE(path.stat().st_mode) if path.exists() else 0o600
+            if mode is None:
+                mode = stat.S_IMODE(path.stat().st_mode) if path.exists() else 0o600
             os.fchmod(temp_file.fileno(), mode)
             temp_file.write(content)
             temp_file.flush()
@@ -168,7 +168,9 @@ def _write_merged(settings_path, settings, merged):
     if merged == settings:
         return
     if settings_path.exists():
-        shutil.copy2(settings_path, _backup_path(settings_path))
+        # Modo da origem aplicado antes de gravar: o backup nunca fica legível por outros
+        mode = stat.S_IMODE(settings_path.stat().st_mode)
+        write_settings_atomically(_backup_path(settings_path), settings_path.read_bytes(), mode)
     write_settings_atomically(settings_path, (json.dumps(merged, ensure_ascii=False, indent=2) + "\n").encode("utf-8"))
 
 
