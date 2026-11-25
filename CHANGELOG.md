@@ -6,6 +6,8 @@ All notable changes to Retro Agent Pet are documented here. The format is based 
 
 ## [Unreleased]
 
+## [0.9.1] - 2026-11-25
+
 ### Security
 
 - Setup backups of agent settings are written with the source file's mode before
@@ -171,7 +173,8 @@ All notable changes to Retro Agent Pet are documented here. The format is based 
   retro computer on the bar, and the Início, Sessões, Limites, Uso, Pedido and
   Agentes screens, with usage and limits from Omarchy's own collectors.
 
-[Unreleased]: https://github.com/MarlonAzevedo/omarchy-retro-agent-pet/compare/v0.9.0...HEAD
+[Unreleased]: https://github.com/MarlonAzevedo/omarchy-retro-agent-pet/compare/v0.9.1...HEAD
+[0.9.1]: https://github.com/MarlonAzevedo/omarchy-retro-agent-pet/compare/v0.9.0...v0.9.1
 [0.9.0]: https://github.com/MarlonAzevedo/omarchy-retro-agent-pet/compare/v0.8.0...v0.9.0
 [0.8.0]: https://github.com/MarlonAzevedo/omarchy-retro-agent-pet/compare/v0.7.0...v0.8.0
 [0.7.0]: https://github.com/MarlonAzevedo/omarchy-retro-agent-pet/compare/v0.6.0...v0.7.0
