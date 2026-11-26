@@ -6,6 +6,28 @@ All notable changes to Retro Agent Pet are documented here. The format is based 
 
 ## [Unreleased]
 
+## [0.10.0] - 2026-11-26
+
+### Changed
+
+- Redesigned all five built-in companions (Computer, Cat, ET, Dog and Axolotl)
+  with 1 px outlines, rounded 32×32 silhouettes, three-tone theme-aware shading
+  and expressive eyes, plus refreshed `characters.png` and `preview.png`.
+
+### Added
+
+- Dedicated 32×32 detail overlays for petting (happy eyes and heart) and
+  celebrations (animated fireworks) when defined by a character.
+
+### Fixed
+
+- Opening the panel now calls `refreshAll(false)` instead of `refreshLimits()`,
+  keeping local token counts on the Usage screen fresh (20 s scan cache instead
+  of 15 min) while falling back to `refreshLimits()` on older Omarchy builds.
+- Daily mood (`animado`, `cansado`, `emburrado`) no longer drops 32×32 character
+  details across active states or idle silhouettes; idle moods now recolor only
+  eyes and mouth over the detailed 32×32 sprite.
+
 ## [0.9.1] - 2026-11-25
 
 ### Security
@@ -173,7 +195,8 @@ All notable changes to Retro Agent Pet are documented here. The format is based 
   retro computer on the bar, and the Início, Sessões, Limites, Uso, Pedido and
   Agentes screens, with usage and limits from Omarchy's own collectors.
 
-[Unreleased]: https://github.com/MarlonAzevedo/omarchy-retro-agent-pet/compare/v0.9.1...HEAD
+[Unreleased]: https://github.com/MarlonAzevedo/omarchy-retro-agent-pet/compare/v0.10.0...HEAD
+[0.10.0]: https://github.com/MarlonAzevedo/omarchy-retro-agent-pet/compare/v0.9.1...v0.10.0
 [0.9.1]: https://github.com/MarlonAzevedo/omarchy-retro-agent-pet/compare/v0.9.0...v0.9.1
 [0.9.0]: https://github.com/MarlonAzevedo/omarchy-retro-agent-pet/compare/v0.8.0...v0.9.0
 [0.8.0]: https://github.com/MarlonAzevedo/omarchy-retro-agent-pet/compare/v0.7.0...v0.8.0
