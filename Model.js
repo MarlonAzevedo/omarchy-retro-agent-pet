@@ -529,11 +529,12 @@ function petRows(state, frame, character, detailed, mood) {
     if (matchesWhen(overlay.when, state, phase, item.frames))
       Object.keys(overlay.rows).forEach(function(y) { rows[Number(y)] = overlay.rows[y] })
   })
-  if (state === "idle" && mood && mood !== "normal") {
-    var face = mood === "animado" ? "A" : mood === "cansado" ? "Z" : "X"
+  var idleMood = state === "idle" && mood && mood !== "normal" ? mood : ""
+  if (idleMood && !detailed) {
+    var face = idleMood === "animado" ? "A" : idleMood === "cansado" ? "Z" : "X"
     item.eyes.forEach(function(point) { pixel(point[0], point[1], face) })
-    if (mood === "emburrado") item.mouth.forEach(function(point) { pixel(point[0], point[1], "X") })
-    if (mood === "animado") item.mouth.forEach(function(point) { pixel(point[0], point[1], "A") })
+    if (idleMood === "emburrado") item.mouth.forEach(function(point) { pixel(point[0], point[1], "X") })
+    if (idleMood === "animado") item.mouth.forEach(function(point) { pixel(point[0], point[1], "A") })
   }
   if (!detailed) return rows
   var pixels = []
@@ -546,12 +547,35 @@ function petRows(state, frame, character, detailed, mood) {
     if (pixels[y][x - 1] === "O" || pixels[y - 1][x] === "O") pixels[y][x] = "H"
     else if (pixels[y][x + 1] === "O" || pixels[y + 1][x] === "O") pixels[y][x] = "S"
   }
-  if ((!mood || mood === "normal") && state !== "petted" && state !== "celebrate")
-    item.detail.forEach(function(detail) {
-      if (!matchesWhen(detail.when, state, phase, item.frames)) return
-      detail.lines.forEach(function(line) {
-        for (var i = 0; i < line[2].length; i++) pixels[line[1]][line[0] + i] = line[2].charAt(i)
-      })
+  item.detail.forEach(function(detail) {
+    if ((state === "petted" || state === "celebrate") && detail.when.state !== state) return
+    if (!matchesWhen(detail.when, state, phase, item.frames)) return
+    detail.lines.forEach(function(line) {
+      for (var i = 0; i < line[2].length; i++) pixels[line[1]][line[0] + i] = line[2].charAt(i)
     })
+  })
+  if (idleMood) {
+    var moodColor = idleMood === "animado" ? "A" : idleMood === "cansado" ? "Z" : "X"
+    item.eyes.forEach(function(point, idx) {
+      var ex = point[0] * 2, ey = point[1] * 2
+      var minDx = idx === 0 ? -4 : -1, maxDx = idx === 0 ? 2 : 5
+      for (var dy = -1; dy <= 3; dy++) for (var dx = minDx; dx <= maxDx; dx++) {
+        var px = ex + dx, py = ey + dy
+        if (px < 0 || px >= 32 || py < 0 || py >= 32) continue
+        if (pixels[py][px] === "E")
+          pixels[py][px] = (idleMood === "cansado" && dy <= 0) ? item.face : moodColor
+      }
+    })
+    if (idleMood === "animado" || idleMood === "emburrado") {
+      item.mouth.forEach(function(point) {
+        var mx = point[0] * 2, my = point[1] * 2
+        for (var dy = -1; dy <= 3; dy++) for (var dx = -2; dx <= 3; dx++) {
+          var px = mx + dx, py = my + dy
+          if (px >= 0 && px < 32 && py >= 0 && py < 32 && pixels[py][px] === "E")
+            pixels[py][px] = moodColor
+        }
+      })
+    }
+  }
   return pixels.map(function(row) { return row.join("") })
 }

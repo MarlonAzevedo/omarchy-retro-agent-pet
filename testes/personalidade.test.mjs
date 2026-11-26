@@ -197,6 +197,43 @@ test('C28: fogos animam e diferem dos outros estados', () => {
   assert.notDeepEqual(Model.petRows('celebrate', 0, oneFrame), Model.petRows('celebrate', 1, oneFrame))
 })
 
+test('carinho e fogos em 32x32 aplicam detail próprio quando definido', () => {
+  for (const character of Object.keys(golden)) {
+    const petted32 = Model.petRows('petted', 0, character, true).join('\n')
+    const idle32 = Model.petRows('idle', 0, character, true).join('\n')
+    const fire0 = Model.petRows('celebrate', 0, character, true).join('\n')
+    const fire1 = Model.petRows('celebrate', 1, character, true).join('\n')
+    assert.notEqual(petted32, idle32, `${character}/petted 32x32`)
+    assert.notEqual(fire0, fire1, `${character}/celebrate 32x32 animates`)
+    assert.notEqual(fire0, idle32, `${character}/celebrate 32x32 differs from idle`)
+  }
+  const custom = { ...sample('custom'), detail: [{ when: { awake: true }, lines: [[0, 0, 'X']] }] }
+  assert.equal(Model.petRows('petted', 0, custom, true)[0][0], '.', 'detail genérico não deve vazar para petted')
+})
+
+// Regressão: com humor animado/cansado/emburrado (>= 20 respostas no dia), detail 32x32 sumia e o pet voltava ao bloco 16x16 dobrado
+test('humor não apaga detalhes 32x32 nos estados ativos nem na silhueta do idle', () => {
+  for (const character of Object.keys(golden)) {
+    for (const mood of ['animado', 'cansado', 'emburrado']) {
+      for (const state of ['working', 'attention', 'done', 'focus', 'sleep', 'limit', 'petted', 'celebrate']) {
+        assert.deepEqual(
+          Model.petRows(state, 0, character, true, mood),
+          Model.petRows(state, 0, character, true, 'normal'),
+          `${character}/${state}/${mood} perdeu detail 32x32`
+        )
+      }
+    }
+    const moods32 = ['animado', 'normal', 'cansado', 'emburrado'].map(m => Model.petRows('idle', 0, character, true, m).join('\n'))
+    assert.equal(new Set(moods32).size, 4, `${character} deve ter 4 faces de humor em 32x32`)
+    // Silhueta refinada (linha 31) deve ser preservada no idle animado em vez de voltar ao bloco dobrado
+    assert.equal(
+      Model.petRows('idle', 0, character, true, 'animado')[31],
+      Model.petRows('idle', 0, character, true, 'normal')[31],
+      `${character}/idle/animado perdeu silhueta 32x32`
+    )
+  }
+})
+
 test('C30: política lista leituras, gravações e remoção', () => {
   const policy = readFileSync(new URL('../PRIVACIDADE.md', import.meta.url), 'utf8')
   for (const term of ['sessions/', 'day/', 'focus.json', 'config.json', 'Agents', 'characters/',
