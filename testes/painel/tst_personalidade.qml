@@ -158,5 +158,19 @@ Item {
       mouseMove(area, 20, 20)
       compare(panel.petState, "petted")
     }
+
+    // Regressão: abrir o painel só atualizava limites e segurava tokens no cache de 15 min
+    function test_opening_refreshes_usage_and_limits() {
+      var panel = loader.item
+      verify(!!panel.usage, "Camada de uso do Omarchy ausente")
+      panel.opened = false
+      panel.usage.refreshAllCalls = 0
+      panel.usage.refreshLimitsCalls = 0
+      panel.usage.lastRefreshForce = null
+      panel.opened = true
+      compare(panel.usage.refreshAllCalls, 1, "Abrir o painel deveria atualizar uso e limites")
+      compare(panel.usage.lastRefreshForce, false, "Atualização ao abrir não deve forçar bypass do cache curto")
+      compare(panel.usage.refreshLimitsCalls, 0, "Não deveria cair no fallback refreshLimits quando refreshAll existe")
+    }
   }
 }

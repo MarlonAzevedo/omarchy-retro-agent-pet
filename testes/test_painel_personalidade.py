@@ -53,3 +53,7 @@ class PainelPersonagemTests(unittest.TestCase):
     def test_limit_follows_selected_agent(self):
         with tempfile.TemporaryDirectory() as temp:
             run_qml(self, "test_limit_follows_selected_agent", temp)
+
+    def test_opening_refreshes_usage_and_limits(self):
+        with tempfile.TemporaryDirectory() as temp:
+            run_qml(self, "test_opening_refreshes_usage_and_limits", temp)

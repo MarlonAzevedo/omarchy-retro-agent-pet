@@ -381,7 +381,10 @@ Panel {
   onOpenedChanged: {
     if (!opened) return
     if (!characterScan.running) characterScan.running = true
-    if (root.usage) root.usage.refreshLimits()
+    if (root.usage) {
+      if (typeof root.usage.refreshAll === "function") root.usage.refreshAll(false)
+      else if (typeof root.usage.refreshLimits === "function") root.usage.refreshLimits()
+    }
     if (!hooksSetup.running) hooksCheck.running = true
   }
 
